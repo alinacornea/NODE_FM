@@ -9,15 +9,11 @@ module.exports = function(app){
         'user': 'staffer',
         'password': 'test123',
         'layout': 'AllProgramsEvents'
-      // }).then(res => console.log(res)).catch(err => console.log(err))
     }).then(res => {
       return axios.get('https://fm107.beezwax.net/fmi/rest/api/record/FilemakerProject_nov25/AllProgramsEvents', {
         headers: {
           'FM-Data-token': res.data.token
         }
-      //   req.axios = axios.create({
-      //    headers: {'FM-Data-token': res.data.token}
-      //  });
       });
     }).then(response => {
                     // console.log(response.data.data)
@@ -34,18 +30,13 @@ module.exports = function(app){
           'user': 'staffer',
           'password': 'test123',
           'layout': 'DATA_API'
-        // }).then(res => console.log(res)).catch(err => console.log(err))
       }).then(res => {
         return axios.get('https://fm107.beezwax.net/fmi/rest/api/record/FilemakerProject_nov25/DATA_API', {
           headers: {
             'FM-Data-token': res.data.token
           }
-        //   req.axios = axios.create({
-        //    headers: {'FM-Data-token': res.data.token}
-        //  });
         });
       }).then(response => {
-                      // console.log(response.data.data[0].fieldData) //node
                       res.send(response.data)
             })
         .catch(err => {
@@ -55,17 +46,29 @@ module.exports = function(app){
     });
 
     /*
-    * posting data to filemaker from client side
+    * posting or modifying data to filemaker from client side
     */
 
     app.post('/filemaker-data', (req, res) => {
       // /fmi/rest/api/record/:solution/:layout/:recordId
-      console.log('BODY:',req.body);
-      axios.put('https://fm107.beezwax.net/fmi/rest/api/record/FilemakerProject_nov25/DATA_API/2', {
+      console.log('BODY:',req.body.NODE);
+      axios.post('https://fm107.beezwax.net/fmi/rest/api/auth/FilemakerProject_nov25', {
+          'user': 'staffer',
+          'password': 'test123',
+          'layout': 'DATA_API'
+      }).then(res => {
+     return  axios.post('https://fm107.beezwax.net/fmi/rest/api/record/FilemakerProject_nov25/DATA_API', {
         headers: {
-          'FM-Data-token': res.data.token,
-          data: req.body
+          'FM-Data-token': res.data.token
+        },
+        body:{
+          "data": {
+            "TEST": req.body.NODE
+          }
         }
-    });
+      });
+    }).then(response => {
+      console.log(respose)
+    }).catch(err => {console.log(err)})
   });
 };

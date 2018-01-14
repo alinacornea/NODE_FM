@@ -71,7 +71,7 @@ class Filemaker extends Component {
             value={this.state.node}/>
             <RaisedButton type="submit" label="Submit" primary onClick={this.sendData}/>
 
-            <h1>Filemaker Sign Ins</h1>
+            <h1>DATA</h1>
             <h2>NODE:{this.state.node} </h2>
               <div className="items">
                 {data.map((item, idx) =>
