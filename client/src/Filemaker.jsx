@@ -28,7 +28,6 @@ class Filemaker extends Component {
       .then(res => res.json())
       .then((res) => {
         // const arr = res.data[0].portalData.AttendeeSignIn[0]['AttendeeSignIn::DOB']
-        console.log('Response:', res);
         this.setState({node: res.data[0].fieldData.NODE});
         for (var key in res.data) {
             for(var id in res.data[key].portalData.AttendeeSignIn){
