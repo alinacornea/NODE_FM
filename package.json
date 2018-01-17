@@ -12,8 +12,10 @@
     "debug": "^2.6.9",
     "express": "^4.15.5",
     "jade": "^1.11.0",
+    "localStorage": "^1.0.3",
     "morgan": "^1.9.0",
     "react-create": "^1.0.2",
+    "request": "^2.83.0",
     "serve-favicon": "^2.4.5"
   }
 }

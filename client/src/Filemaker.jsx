@@ -19,7 +19,8 @@ class Filemaker extends Component {
         zip: ''
       }],
       info:[],
-      node:''
+      nodeR:'',
+      nodeS:''
     }
   }
 
@@ -28,7 +29,7 @@ class Filemaker extends Component {
       .then(res => res.json())
       .then((res) => {
         // const arr = res.data[0].portalData.AttendeeSignIn[0]['AttendeeSignIn::DOB']
-        this.setState({node: res.data[0].fieldData.NODE});
+        this.setState({nodeR: res.data[0].fieldData.NODE_S});
         for (var key in res.data) {
             for(var id in res.data[key].portalData.AttendeeSignIn){
               let data = res.data[key].portalData.AttendeeSignIn[id];
@@ -40,12 +41,12 @@ class Filemaker extends Component {
 
   onChange = (e) => {
     this.setState({
-      node : e.target.value
+      nodeS : e.target.value
     });
   }
 
   sendData = () => {
-    const data = this.state.node;
+    const data = encodeURIComponent(this.state.nodeS);
     axios({
       method: 'post',
       url: '/filemaker-data',
@@ -65,13 +66,13 @@ class Filemaker extends Component {
           <Paper>
             <TextField
             floatingLabelText="New Value"
-            name="node"
+            name="nodeS"
             onChange={this.onChange}
-            value={this.state.node}/>
+            value={this.state.nodeS}/>
             <RaisedButton type="submit" label="Submit" primary onClick={this.sendData}/>
 
             <h1>DATA</h1>
-            <h2>NODE:{this.state.node} </h2>
+            <h2>NODE:{this.state.nodeR} </h2>
               <div className="items">
                 {data.map((item, idx) =>
                   <li key={idx}>{item['AttendeeSignIn::Name']} • {item['AttendeeSignIn::DOB']} • {item['AttendeeSignIn::ZipCode']} <br/>   </li>
