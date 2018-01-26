@@ -80,6 +80,33 @@ module.exports = function(app){
         });
     });
 
+   app.post('/filemaker-create', function(req, res, next){
+
+      axios.post('https://fm107.beezwax.net/fmi/rest/api/auth/FilemakerProject_nov25', {
+          'user': 'staffer',
+          'password': 'test123',
+          'layout': 'DATA_API'
+      }).then(res => {
+        return axios({
+            url: 'https://fm107.beezwax.net/fmi/rest/api/record/FilemakerProject_nov25/DATA_API/2',
+            method: "PUT",
+            headers: {
+              'FM-Data-token': res.data.token,
+              'Content-type':'application/json'
+            },
+            data: {
+                data: {
+                  NODE_R: `${decodeURIComponent(req.body.NODE)}`
+                }
+              }
+          });
+      }).then(res => {
+        console.log('response SUCCESS ', res.data)
+        }).catch(err => {
+                      console.log('error', err)
+        });
+    });
+
 
 
     //    var options = {
