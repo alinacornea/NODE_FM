@@ -19,14 +19,15 @@
 
 .login{
   margin: 0 auto;
-  height:450px;
+  height:500px;
   background-color: lightgrey;
-  width:60%;
-  margin-top: 15%;
+  width:50%;
+  margin-top: 7%;
   padding:60px;
   border: 1px solid grey;
 }
 
 .card-heading{
   text-align: center;
+  margin-top: 0;
 }

@@ -15,6 +15,20 @@ import Filemaker from './Filemaker';
 import DataApi from './DataApi';
 import Home from './Home';
 import Auth from './Auth';
+import Logout from './Logout';
+
+const LoggedOutRoute = ({ component: Component, ...rest }) => (
+  <Route {...rest} render={props => (
+    Auth.isUserAuthenticated() ? (
+      <Redirect to={{
+        pathname: '/',
+        state: { from: props.location }
+      }}/>
+    ) : (
+      <Component {...props} {...rest} />
+    )
+  )}/>
+)
 
 const PrivateRoute = ({ component: Component, ...rest }) => (
   <Route {...rest} render={props => (
@@ -43,7 +57,7 @@ class App extends Component {
       this.toggleAuthenticateStatus()
     }
 
-    toggleAuthenticateStatus() {
+    toggleAuthenticateStatus = () => {
       this.setState({ authenticated: Auth.isUserAuthenticated() })
     }
 
@@ -62,7 +76,11 @@ class App extends Component {
                   <Link to="/dataapi"style={{ margin:10}}>DataApi</Link>
                 </div>
        </Toolbar>
-            <Route exact path="/" component={Home} toggleAuthenticateStatus={() => this.toggleAuthenticateStatus()}/>
+          {this.state.authenticated ? (
+            <Route exact path="/" component={Logout}/>
+              ) : (
+            <LoggedOutRoute exact path="/" component={Home} toggleAuthenticateStatus={() => this.toggleAuthenticateStatus()}/>
+           )}
             <PrivateRoute path="/programs" component={Programs}/>
             <PrivateRoute path="/dataapi" component={DataApi}/>
             <PrivateRoute path="/filemaker" component={Filemaker}/>

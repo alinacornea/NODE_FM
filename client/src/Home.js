@@ -10,6 +10,9 @@ import Account from 'material-ui/svg-icons/action/account-box';
 const input = {
    WebkitBoxShadow: '0 0 0 1000px lightgrey inset'
 }
+const margin ={
+  marginLeft:20
+}
 
 class Home extends Component {
 
@@ -29,7 +32,8 @@ class Home extends Component {
       data: {
         user: '',
         password: '',
-        solution: ''
+        solution: '',
+        layout:''
       }
     };
   }
@@ -41,18 +45,20 @@ class Home extends Component {
     const user = encodeURIComponent(this.state.data.user);
     const password = encodeURIComponent(this.state.data.password);
     const solution = encodeURIComponent(this.state.data.solution);
+    const layout = encodeURIComponent(this.state.data.layout);
 
-    const formData = `user=${user}&password=${password}&solution=${solution}`;
+    const formData = `user=${user}&password=${password}&solution=${solution}&layout=${layout}`;
 
     axios({
       method: 'post',
       url: '/filemaker-login',
-      data: {formData}
+      data: formData
     }).then(res => {
-        console.log("SUCCES")
         this.setState({errors: {}
       });
       Auth.authenticateUser(res.token);
+      this.props.toggleAuthenticateStatus();
+      this.props.history.push('/dataapi');
     }).catch(err => {
       console.log(err);
     })
@@ -73,20 +79,22 @@ class Home extends Component {
     const {data, errors, successMessage} = this.state;
 
     return (
+
       <div className="login">
+      <h2 className="card-heading">Authenticate with FM Solution</h2>
         <form action="" onSubmit={this.processForm}>
-          <h2 className="card-heading">Authenticate with FM Solution</h2>
 
           {successMessage && <p className="success-message">{successMessage}</p>}
           {errors.summary && <p className="error-message">{errors.summary}</p>}
 
-          <div className="field-line">
           <Account/>
+          <div className="field-line">
             <TextField
               inputStyle={input}
               floatingLabelText="Enter User"
               name="user"
               fullWidth={true}
+              style={margin}
               errorText={errors.user}
               onChange={this.changeData}
               value={data.user}
@@ -101,12 +109,12 @@ class Home extends Component {
               name="password"
               fullWidth={true}
               inputStyle={input}
+              style={margin}
               onChange={this.changeData}
               errorText={errors.password}
               value={data.password}
             />
           </div>
-
           <Lock/>
           <div className="field-line">
             <TextField
@@ -114,9 +122,23 @@ class Home extends Component {
               name="solution"
               fullWidth={true}
               inputStyle={input}
+              style={margin}
               onChange={this.changeData}
               errorText={errors.solution}
               value={data.solution}
+            />
+          </div>
+          <Lock/>
+          <div className="field-line">
+            <TextField
+              floatingLabelText="Enter Layout"
+              name="layout"
+              fullWidth={true}
+              inputStyle={input}
+              style={margin}
+              onChange={this.changeData}
+              errorText={errors.layout}
+              value={data.layout}
             />
           </div>
 

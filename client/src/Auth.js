@@ -9,17 +9,10 @@ class Auth {
     localStorage.setItem('token', token);
   }
 
-  static setProfile(picture) {
-    localStorage.setItem('picture', picture);
-  }
-
-  static setUser(email) {
-    localStorage.setItem('user', email);
-  }
-
   static isUserAuthenticated() {
     return localStorage.getItem('token') !== null;
   }
+  
   static deauthenticateUser() {
     localStorage.removeItem('token');
     localStorage.removeItem('picture');
@@ -29,15 +22,6 @@ class Auth {
   static getToken() {
     return localStorage.getItem('token');
   }
-
-  static getUser() {
-    return localStorage.getItem('user');
-  }
-
-  static getProfile(){
-    return localStorage.getItem('picture');
-  }
-
 
 }
 
