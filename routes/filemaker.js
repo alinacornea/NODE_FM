@@ -107,47 +107,4 @@ module.exports = function(app){
         });
     });
 
-
-
-    //    var options = {
-    //       method: 'POST',
-    //       url: 'https://fm107.beezwax.net/fmi/rest/api/auth/FilemakerProject_nov25',
-    //       headers:
-    //        { 'Cache-Control': 'no-cache',
-    //          'Content-Type': 'application/json' },
-    //       body: { user: 'staffer', password: 'test123', layout: 'DATA_API' },
-    //       json: true
-    //     };
-    //
-    //     request(options, function (error, response, body) {
-    //         if (error) throw new Error(error);
-    //       //storing token so i can use it for other request
-    //       local.setItem('token', body.token);
-    //       //geting token from local storage to see it works
-    //       const token = local.getItem('token');
-    //       console.log(token);
-    //
-    //       var option = {
-    //         method: 'PUT',
-    //         url: 'https://fm107.beezwax.net/fmi/rest/api/record/FilemakerProject_nov25/DATA_API/2',
-    //         headers: {
-    //            'Cache-Control': 'no-cache',
-    //            'Content-Type': 'application/json',
-    //            'FM-Data-Token': token
-    //         },
-    //         body: {
-    //           data: {
-    //             NODE: req.body.NODE
-    //           }
-    //         },
-    //         json: true
-    //       };
-    //
-    //       request(option, function (error, response, body) {
-    //         if (error) throw new Error(error);
-    //        console.log(body);
-    //      });
-    //   });
-    // });
-
 };

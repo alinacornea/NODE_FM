@@ -4,6 +4,29 @@
 }
 
 .programs{
-margin-top:20px;
+  margin-top:20px;
+}
 
+.recordMid{
+  margin: 0 auto;
+  height:350px;
+  background-color: lightgrey;
+  width:60%;
+  margin-top: 15%;
+  padding:60px;
+  border: 1px solid grey;
+}
+
+.login{
+  margin: 0 auto;
+  height:450px;
+  background-color: lightgrey;
+  width:60%;
+  margin-top: 15%;
+  padding:60px;
+  border: 1px solid grey;
+}
+
+.card-heading{
+  text-align: center;
 }
