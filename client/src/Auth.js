@@ -12,16 +12,28 @@ class Auth {
   static isUserAuthenticated() {
     return localStorage.getItem('token') !== null;
   }
-  
+
   static deauthenticateUser() {
     localStorage.removeItem('token');
-    localStorage.removeItem('picture');
-    localStorage.removeItem('preview');
   }
 
   static getToken() {
     return localStorage.getItem('token');
   }
+
+  static getSolution() {
+    return localStorage.getItem('solution');
+  }
+
+  static getLayout() {
+    return localStorage.getItem('layout');
+  }
+
+  static setInfo(solution, layout) {
+    localStorage.setItem('solution', solution);
+    localStorage.setItem('layout', layout);
+  }
+
 
 }
 

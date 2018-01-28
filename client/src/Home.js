@@ -56,7 +56,8 @@ class Home extends Component {
     }).then(res => {
         this.setState({errors: {}
       });
-      Auth.authenticateUser(res.token);
+      Auth.authenticateUser(res.data.token);
+      Auth.setInfo(solution, layout);
       this.props.toggleAuthenticateStatus();
       this.props.history.push('/dataapi');
     }).catch(err => {

@@ -53,58 +53,54 @@ module.exports = function(app){
     * posting or modifying data to filemaker from client side
     */
 
-   app.post('/filemaker-data', function(req, res, next){
-
-      axios.post('https://fm107.beezwax.net/fmi/rest/api/auth/FilemakerProject_nov25', {
-          'user': 'staffer',
-          'password': 'test123',
-          'layout': 'DATA_API'
-      }).then(res => {
+   app.post('/filemaker-update', function(req, res, next){
+     const database = decodeURIComponent(req.body.solution);
+     const layout = decodeURIComponent(req.body.layout);
+     const field = decodeURIComponent(req.body.field);
         return axios({
-            url: 'https://fm107.beezwax.net/fmi/rest/api/record/FilemakerProject_nov25/DATA_API/2',
+            url: `https://fm107.beezwax.net/fmi/rest/api/record/${database}/${layout}/${req.body.recordId}`,
             method: "PUT",
             headers: {
-              'FM-Data-token': res.data.token,
+              'FM-Data-token': req.body.token,
               'Content-type':'application/json'
             },
             data: {
                 data: {
-                  NODE_R: `${decodeURIComponent(req.body.NODE)}`
+                NODE: decodeURIComponent(req.body.newData)
                 }
               }
-          });
-      }).then(res => {
-        console.log('response SUCCESS ', res.data)
+      }).then(response => {
+          res.send(response.data)
         }).catch(err => {
-                      console.log('error', err)
+          console.log('error', err)
         });
     });
 
-   app.post('/filemaker-create', function(req, res, next){
 
-      axios.post('https://fm107.beezwax.net/fmi/rest/api/auth/FilemakerProject_nov25', {
-          'user': 'staffer',
-          'password': 'test123',
-          'layout': 'DATA_API'
-      }).then(res => {
-        return axios({
-            url: 'https://fm107.beezwax.net/fmi/rest/api/record/FilemakerProject_nov25/DATA_API/2',
-            method: "PUT",
-            headers: {
-              'FM-Data-token': res.data.token,
-              'Content-type':'application/json'
-            },
-            data: {
-                data: {
-                  NODE_R: `${decodeURIComponent(req.body.NODE)}`
-                }
-              }
-          });
-      }).then(res => {
-        console.log('response SUCCESS ', res.data)
-        }).catch(err => {
-                      console.log('error', err)
-        });
-    });
+    app.post('/filemaker-create', function(req, res, next){
+      const database = decodeURIComponent(req.body.solution);
+      const layout = decodeURIComponent(req.body.layout);
+      const field = decodeURIComponent(req.body.field);
+
+      let data = {};
+      data[`${field}`] = decodeURIComponent(req.body.newData);
+
+         return axios({
+             url: `https://fm107.beezwax.net/fmi/rest/api/record/${database}/${layout}`,
+             method: "POST",
+             headers: {
+               'FM-Data-token': req.body.token,
+               'Content-type':'application/json'
+             },
+             data: {
+                 data: data
+               }
+       }).then(response => {
+         res.send(response.data)
+         console.log('response SUCCESS ', response.data)
+         }).catch(err => {
+                       console.log('error', err)
+         });
+     });
 
 };

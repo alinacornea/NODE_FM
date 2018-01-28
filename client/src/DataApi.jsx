@@ -1,39 +1,65 @@
 import React, { Component } from 'react';
 // import { BrowserRouter as Router,  Route, Link, Redirect} from 'react-router-dom';
 import './Programs.css';
+import Auth from './Auth';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 // import FlatButton from 'material-ui/FlatButton';
 import {Tabs, Tab} from 'material-ui/Tabs';
 import  axios from 'axios';
 
+const input = {
+   WebkitBoxShadow: '0 0 0 1000px lightgrey inset'
+}
+
 class DataApi extends Component {
   constructor(props){
     super(props);
     this.state = {
       info:[],
-      nodeR:'',
-      nodeS:'',
-      newField: '',
-      dataField: ''
+      data: {
+        field: '',
+        layout: '',
+        recordId: '',
+        newData: ''
+      }
     }
   }
 
-  onChange = (e) => {
+
+  onChange = (event, value) => {
+    const field = event.target.name;
+    const data = this.state.data;
+    data[field] = event.target.value;
     this.setState({
-      nodeS : e.target.value
+      data
     });
   }
 
   //update existing field
   updateData = () => {
-    const data = encodeURIComponent(this.state.nodeS);
+    const solution = encodeURIComponent(Auth.getSolution());
+    const layout = encodeURIComponent(Auth.getLayout());
+    const token = encodeURIComponent(Auth.getToken());
+    const field = encodeURIComponent(this.state.data.field);
+    const recordId = encodeURIComponent(this.state.data.recordId);
+    const newData = encodeURIComponent(this.state.data.newData);
+
+    const send = {
+      solution: solution,
+      token: token,
+      layout: layout,
+      field: field,
+      recordId: recordId,
+      data: newData
+    }
+
     axios({
       method: 'post',
-      url: '/filemaker-data',
-      data: {NODE:data}
+      url: '/filemaker-update',
+      data: send
     }).then(res => {
-      this.setState({nodeS: ''})
+      this.setState({data: {}})
     }).catch(err => {
       console.log(err);
     })
@@ -41,85 +67,96 @@ class DataApi extends Component {
 
   //create new field
   createField = () => {
-    const field = encodeURIComponent(this.newField);
-    const data = encodeURIComponent(this.dataField);
+    const solution = encodeURIComponent(Auth.getSolution());
+    const layout = encodeURIComponent(Auth.getLayout());
+    const token = encodeURIComponent(Auth.getToken());
+    const field = encodeURIComponent(this.state.data.field);
+    const newData = encodeURIComponent(this.state.data.newData);
+
+    const send = {
+      solution: solution,
+      token: token,
+      layout: layout,
+      field: field,
+      newData: newData
+    }
+
     axios({
       method: 'post',
       url: '/filemaker-create',
-      data:{
-        field: field,
-        data: data
-      }
+      data: send
     }).then(res => {
       console.log(res)
+      this.setState({data: {}})
     }).catch(err => {
       console.log(err);
     });
   }
 
   render() {
+    const { data } = this.state;
+
     return (
         <div>
           <Tabs>
              <Tab label="Update Record" style={{height: '70px'}}>
              <div className="recordMid">
                   <TextField
-                    floatingLabelText="Enter Layout"
-                    name="edit"
-                    onChange={this.onChange}
-                    fullWidth={true}
-                    value={this.state.nodeS}/>
+                     floatingLabelText="Enter Field"
+                     name="field"
+                     onChange={this.onChange}
+                     fullWidth={true}
+                     value={data.field}/>
                   <TextField
                     floatingLabelText="Enter Record"
-                    name="edit"
+                    name="recordId"
                     onChange={this.onChange}
                     fullWidth={true}
-                    value={this.state.nodeS}/>
-                  <TextField
-                    floatingLabelText="Enter Field"
-                    name="edit"
-                    onChange={this.onChange}
-                    fullWidth={true}
-                    value={this.state.nodeS}/>
+                    value={data.recordId}/>
                   <TextField
                     floatingLabelText="Enter New Data"
-                    name="edit"
+                    name="newData"
                     onChange={this.onChange}
                     fullWidth={true}
-                    value={this.state.nodeS}/>
+                    value={data.newData}/>
                 <div className="button-line">
                   <RaisedButton type="submit"label="Update"  fullWidth={true} style={{marginTop:30}} primary onClick={this.updateData}/>
                 </div>
               </div>
               </Tab>
-              <Tab label="Create New" >
+
+              <Tab label="Create Record" >
                 <div className="recordMid">
                   <TextField
+                    inputStyle={input}
                     floatingLabelText="Enter Layout"
-                    name="create"
+                    name="layout"
                     onChange={this.onChange}
                     rows={2}
                     fullWidth={true}
-                    value={this.state.newField}/>
+                    value={data.layout}/>
                   <TextField
+                    inputStyle={input}
                     floatingLabelText="New Field"
-                    name="create"
+                    name="field"
                     onChange={this.onChange}
                     rows={2}
                     fullWidth={true}
-                    value={this.state.newField}/>
+                    value={data.field}/>
                   <TextField
+                    inputStyle={input}
                     floatingLabelText="New Data"
-                    name="create"
+                    name="newData"
                     rows={2}
                     fullWidth={true}
                     onChange={this.onChange}
-                    value={this.state.dataField}/>
+                    value={data.newData}/>
                   <div className="button-line">
                     <RaisedButton type="submit" label="Create New Record" fullWidth={true} style={{marginTop:30}} primary onClick={this.createField}/>
                   </div>
                </div>
               </Tab>
+
               <Tab label="Delete Record" >
                <div className="recordMid">
                    <TextField
@@ -137,7 +174,7 @@ class DataApi extends Component {
                    onChange={this.onChange}
                    value={this.state.nodeS}/>
                   <div className="button-line">
-                    <RaisedButton type="submit" label="Delete Record" fullWidth={true} style={{marginTop:30}} primary onClick={this.updateData}/>
+                    <RaisedButton type="submit" label="Delete Record" fullWidth={true} style={{marginTop:30}} primary onClick={this.dataData}/>
                   </div>
                </div>
               </Tab>

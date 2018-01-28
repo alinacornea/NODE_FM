@@ -23,8 +23,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
 // app.use('/programs', filemaker);
-require('./routes/login')(app);
 require('./routes/filemaker')(app);
+require('./routes/login')(app);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
