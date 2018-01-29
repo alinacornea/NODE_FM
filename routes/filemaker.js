@@ -72,7 +72,7 @@ module.exports = function(app){
       }).then(response => {
           res.send(response.data)
         }).catch(err => {
-          console.log('error', err)
+          console.log('error: ', err)
         });
     });
 
@@ -97,9 +97,49 @@ module.exports = function(app){
                }
        }).then(response => {
          res.send(response.data)
-         console.log('response SUCCESS ', response.data)
          }).catch(err => {
-                       console.log('error', err)
+              console.log('Error: ', err)
+         });
+     });
+
+    app.post('/filemaker-delete', function(req, res, next){
+      const database = decodeURIComponent(req.body.solution);
+      const layout = decodeURIComponent(req.body.layout);
+      const recordId = parseInt(decodeURIComponent(req.body.recordId), 10);
+         return axios({
+             url: `https://fm107.beezwax.net/fmi/rest/api/record/${database}/${layout}/${recordId}`,
+             method: "DELETE",
+             headers: {
+               'FM-Data-token': req.body.token,
+               'Content-type':'application/json'
+             },
+       }).then(response => {
+         res.send(response.data)
+         }).catch(err => {
+              console.log('Error: ', err)
+         });
+     });
+
+
+    //get record from filemaker database
+    app.post('/filemaker-get', function(req, res, next){
+      const database = decodeURIComponent(req.body.solution);
+      const layout = decodeURIComponent(req.body.layout);
+      const recordId = parseInt(decodeURIComponent(req.body.recordId), 10);
+
+         return axios({
+             url: `https://fm107.beezwax.net/fmi/rest/api/record/${database}/${layout}/${recordId}`,
+             method: "GET",
+             headers: {
+               'FM-Data-token': req.body.token,
+               'Content-type':'application/json'
+             },
+       }).then(response => {
+         console.log(response.data.data)
+         res.send(response.data.data)
+         }).catch(err => {
+                console.log('Error: ', err)
+                res.send({err})
          });
      });
 

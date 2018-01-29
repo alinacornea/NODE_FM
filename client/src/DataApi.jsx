@@ -1,12 +1,22 @@
 import React, { Component } from 'react';
-// import { BrowserRouter as Router,  Route, Link, Redirect} from 'react-router-dom';
-import './Programs.css';
-import Auth from './Auth';
+import  axios from 'axios';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
-// import FlatButton from 'material-ui/FlatButton';
 import {Tabs, Tab} from 'material-ui/Tabs';
-import  axios from 'axios';
+import Dialog from 'material-ui/Dialog';
+import FlatButton from 'material-ui/FlatButton';
+
+import {
+  Table,
+  TableBody,
+  TableHeader,
+  TableHeaderColumn,
+  TableRow,
+  TableRowColumn,
+} from 'material-ui/Table';
+
+import Auth from './Auth';
+import './Programs.css';
 
 const input = {
    WebkitBoxShadow: '0 0 0 1000px lightgrey inset'
@@ -17,6 +27,7 @@ class DataApi extends Component {
     super(props);
     this.state = {
       info:[],
+      dialog: false,
       data: {
         field: '',
         layout: '',
@@ -26,6 +37,9 @@ class DataApi extends Component {
     }
   }
 
+  handleClose = () => {
+    this.setState({dialog: false});
+  };
 
   onChange = (event, value) => {
     const field = event.target.name;
@@ -86,8 +100,67 @@ class DataApi extends Component {
       url: '/filemaker-create',
       data: send
     }).then(res => {
-      console.log(res)
       this.setState({data: {}})
+    }).catch(err => {
+      console.log(err);
+    });
+  }
+
+  deleteRecord = () => {
+    const solution = encodeURIComponent(Auth.getSolution());
+    const token = encodeURIComponent(Auth.getToken());
+    const layout = encodeURIComponent(this.state.data.layout);
+    const recordId = encodeURIComponent(this.state.data.recordId);
+    const send = {
+      solution: solution,
+      token: token,
+      layout: layout,
+      recordId: recordId
+    }
+
+    axios({
+      method: 'post',
+      url: '/filemaker-delete',
+      data: send
+    }).then(res => {
+      const data = this.state.data;
+      data['layout'] = '';
+      data['recordId'] = '';
+
+      this.setState({data, dialog: true})
+    }).catch(err => {
+      console.log(err);
+    });
+  }
+
+  getRecord = () => {
+    const solution = encodeURIComponent(Auth.getSolution());
+    const token = encodeURIComponent(Auth.getToken());
+    const layout = encodeURIComponent(this.state.data.layout);
+    const recordId = encodeURIComponent(this.state.data.recordId);
+    const send = {
+      solution: solution,
+      token: token,
+      layout: layout,
+      recordId: recordId
+    }
+
+    axios({
+      method: 'POST',
+      url: '/filemaker-get',
+      data: send
+    }).then(res => {
+      console.log(res);
+      const data = this.state.data;
+      data['layout'] = '';
+      data['recordId'] = '';
+      for (var key in res.data) {
+          for(var id in res.data[key].portalData.AttendeeSignIn){
+            let data = res.data[key].portalData.AttendeeSignIn[id];
+            this.setState({ info: [...this.state.info, data] })
+          }
+        }
+      this.setState({data, dialog: true})
     }).catch(err => {
       console.log(err);
     });
@@ -95,7 +168,15 @@ class DataApi extends Component {
 
   render() {
     const { data } = this.state;
+    const info = this.state.info;
 
+    const actions = [
+      <FlatButton
+        label="OK"
+        primary={true}
+        onClick={this.handleClose}
+      />
+    ];
     return (
         <div>
           <Tabs>
@@ -160,36 +241,87 @@ class DataApi extends Component {
               <Tab label="Delete Record" >
                <div className="recordMid">
                    <TextField
+                   inputStyle={input}
                    floatingLabelText="Enter Layout"
-                   name="delete"
+                   name="layout"
                    rows={2}
                    fullWidth={true}
                    onChange={this.onChange}
-                   value={this.state.nodeS}/>
+                   value={data.layout}/>
+
                    <TextField
+                   inputStyle={input}
                    floatingLabelText="Enter Record ID"
-                   name="delete"
+                   name="recordId"
                    rows={2}
                    fullWidth={true}
                    onChange={this.onChange}
-                   value={this.state.nodeS}/>
+                   value={data.recordId}/>
                   <div className="button-line">
-                    <RaisedButton type="submit" label="Delete Record" fullWidth={true} style={{marginTop:30}} primary onClick={this.dataData}/>
+                    <RaisedButton type="submit" label="Delete Record" fullWidth={true} style={{marginTop:30}} primary onClick={this.deleteRecord}/>
                   </div>
+                  {(this.state.dialog ? (<Dialog
+                    title="Message:"
+                    actions={actions}
+                    modal={true}
+                    open={this.state.dialog}
+                  >
+                    Your record was deleted succesfully!!
+                  </Dialog>) : ''
+                  )}
                </div>
               </Tab>
               <Tab label="Get Record" >
                <div className="recordMid">
                  <TextField
-                 floatingLabelText="New Value"
-                 name="get"
+                 inputStyle={input}
+                 floatingLabelText="Enter Layout"
+                 name="layout"
                  rows={2}
                  fullWidth={true}
                  onChange={this.onChange}
-                 value={this.state.nodeS}/> <br/>
+                 value={data.layout}/>
+
+                 <TextField
+                 inputStyle={input}
+                 floatingLabelText="Enter Record Id"
+                 name="recordId"
+                 rows={2}
+                 fullWidth={true}
+                 onChange={this.onChange}
+                 value={data.recordId}/>
+
                 <div className="button-line">
-                 <RaisedButton type="submit" label="Get Record" fullWidth={true} style={{marginTop:30}} primary onClick={this.updateData}/>
+                 <RaisedButton type="submit" label="Get Record" fullWidth={true} style={{marginTop:30}} primary onClick={this.getRecord}/>
                 </div>
+                {(this.state.dialog ? (<Dialog
+                  title="Data received:"
+                  actions={actions}
+                  modal={true}
+                  open={this.state.dialog}
+                >
+                <Table>
+                  <TableHeader adjustForCheckbox={false} displaySelectAll={false}>
+                    <TableRow>
+                      <TableHeaderColumn>Name</TableHeaderColumn>
+                      <TableHeaderColumn>Birthday</TableHeaderColumn>
+                      <TableHeaderColumn>Ethnicity</TableHeaderColumn>
+                      <TableHeaderColumn>ZipCode</TableHeaderColumn>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody displayRowCheckbox={false}>
+                      {info.map((item, idx) =>
+                          <TableRow key={idx}>
+                            <TableRowColumn>{item['AttendeeSignIn::Name']}</TableRowColumn>
+                            <TableRowColumn>{item['AttendeeSignIn::DOB']}</TableRowColumn>
+                            <TableRowColumn>{item['AttendeeSignIn::Ethnicity']}</TableRowColumn>
+                            <TableRowColumn>{item['AttendeeSignIn::ZipCode']}</TableRowColumn>
+                          </TableRow>
+                      )}
+                 </TableBody>
+              </Table>
+                </Dialog>) : ''
+                )}
                </div>
               </Tab>
           </Tabs>

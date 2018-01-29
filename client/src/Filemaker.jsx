@@ -30,7 +30,6 @@ class Filemaker extends Component {
     fetch('/filemaker')
       .then(res => res.json())
       .then((res) => {
-        this.setState({nodeR: res.data[0].fieldData.NODE_S});
         for (var key in res.data) {
             for(var id in res.data[key].portalData.AttendeeSignIn){
               let data = res.data[key].portalData.AttendeeSignIn[id];

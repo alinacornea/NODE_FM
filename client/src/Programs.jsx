@@ -28,28 +28,29 @@ class Programs extends Component {
 
 
   render() {
+    const { data } = this.state;
     return (
-        <div>
+      <div>
         <Table>
           <h1>Program Names</h1>
-            <TableHeader>
+            <TableHeader adjustForCheckbox={false} displaySelectAll={false}>
               <TableRow>
                 <TableHeaderColumn>Event Name</TableHeaderColumn>
                 <TableHeaderColumn>Event Type</TableHeaderColumn>
                 <TableHeaderColumn>Event Date</TableHeaderColumn>
               </TableRow>
             </TableHeader>
-            <TableBody>
-             {this.state.data.map((item, idx) =>
+            <TableBody displayRowCheckbox={false}>
+             {data.map((item, idx) =>
                     <TableRow key={idx}>
                       <TableRowColumn>{item.fieldData.EventName}</TableRowColumn>
                       <TableRowColumn>{item.fieldData.EventType}</TableRowColumn>
                       <TableRowColumn>{item.fieldData.EventDate}</TableRowColumn>
                     </TableRow>
-                )}
-            </TableBody>
+              )}
+              </TableBody>
           </Table>
-        </div>
+      </div>
     );
   }
 }
