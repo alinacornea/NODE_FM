@@ -57,6 +57,8 @@ module.exports = function(app){
      const database = decodeURIComponent(req.body.solution);
      const layout = decodeURIComponent(req.body.layout);
      const field = decodeURIComponent(req.body.field);
+     let data = {};
+     data[`${field}`] = decodeURIComponent(req.body.data);
         return axios({
             url: `https://fm107.beezwax.net/fmi/rest/api/record/${database}/${layout}/${req.body.recordId}`,
             method: "PUT",
@@ -65,9 +67,7 @@ module.exports = function(app){
               'Content-type':'application/json'
             },
             data: {
-                data: {
-                NODE: decodeURIComponent(req.body.newData)
-                }
+                data: data
               }
       }).then(response => {
           res.send(response.data)
@@ -135,11 +135,10 @@ module.exports = function(app){
                'Content-type':'application/json'
              },
        }).then(response => {
-         console.log(response.data.data)
+         console.log('response', response.data.data)
          res.send(response.data.data)
          }).catch(err => {
-                console.log('Error: ', err)
-                res.send({err})
+                return next(err)
          });
      });
 

@@ -28,6 +28,9 @@ class DataApi extends Component {
     this.state = {
       info:[],
       dialog: false,
+      update: false,
+      del: false,
+      error: false,
       data: {
         field: '',
         layout: '',
@@ -38,7 +41,7 @@ class DataApi extends Component {
   }
 
   handleClose = () => {
-    this.setState({dialog: false});
+    this.setState({dialog: false, update: false, del: false, error: false});
   };
 
   onChange = (event, value) => {
@@ -73,7 +76,11 @@ class DataApi extends Component {
       url: '/filemaker-update',
       data: send
     }).then(res => {
-      this.setState({data: {}})
+      const data = this.state.data;
+      data['field'] = '';
+      data['recordId'] = '';
+      data['newData'] = '';
+      this.setState({data, update: true})
     }).catch(err => {
       console.log(err);
     })
@@ -100,7 +107,11 @@ class DataApi extends Component {
       url: '/filemaker-create',
       data: send
     }).then(res => {
-      this.setState({data: {}})
+      const data = this.state.data;
+      data['field'] = '';
+      data['newData'] = '';
+
+      this.setState({data})
     }).catch(err => {
       console.log(err);
     });
@@ -127,7 +138,7 @@ class DataApi extends Component {
       data['layout'] = '';
       data['recordId'] = '';
 
-      this.setState({data, dialog: true})
+      this.setState({data, del: true})
     }).catch(err => {
       console.log(err);
     });
@@ -151,9 +162,11 @@ class DataApi extends Component {
       data: send
     }).then(res => {
       console.log(res);
+
       const data = this.state.data;
       data['layout'] = '';
       data['recordId'] = '';
+
       for (var key in res.data) {
           for(var id in res.data[key].portalData.AttendeeSignIn){
             let data = res.data[key].portalData.AttendeeSignIn[id];
@@ -162,7 +175,7 @@ class DataApi extends Component {
         }
       this.setState({data, dialog: true})
     }).catch(err => {
-      console.log(err);
+      this.setState({error: true});
     });
   }
 
@@ -203,6 +216,15 @@ class DataApi extends Component {
                 <div className="button-line">
                   <RaisedButton type="submit"label="Update"  fullWidth={true} style={{marginTop:30}} primary onClick={this.updateData}/>
                 </div>
+                {(this.state.update ? (<Dialog
+                  title="Message:"
+                  actions={actions}
+                  modal={true}
+                  open={this.state.update}
+                >
+                  Your record was updated succesfully!!
+                </Dialog>) : ''
+                )}
               </div>
               </Tab>
 
@@ -235,6 +257,7 @@ class DataApi extends Component {
                   <div className="button-line">
                     <RaisedButton type="submit" label="Create New Record" fullWidth={true} style={{marginTop:30}} primary onClick={this.createField}/>
                   </div>
+
                </div>
               </Tab>
 
@@ -260,11 +283,11 @@ class DataApi extends Component {
                   <div className="button-line">
                     <RaisedButton type="submit" label="Delete Record" fullWidth={true} style={{marginTop:30}} primary onClick={this.deleteRecord}/>
                   </div>
-                  {(this.state.dialog ? (<Dialog
+                  {(this.state.del ? (<Dialog
                     title="Message:"
                     actions={actions}
                     modal={true}
-                    open={this.state.dialog}
+                    open={this.state.del}
                   >
                     Your record was deleted succesfully!!
                   </Dialog>) : ''
@@ -294,7 +317,15 @@ class DataApi extends Component {
                 <div className="button-line">
                  <RaisedButton type="submit" label="Get Record" fullWidth={true} style={{marginTop:30}} primary onClick={this.getRecord}/>
                 </div>
-                {(this.state.dialog ? (<Dialog
+                {(this.state.error ? (<Dialog
+                  title="Error retrieved:"
+                  actions={actions}
+                  modal={true}
+                  open={this.state.error}
+                >
+                  Make sure the record ID is a number and exist!
+                </Dialog>) :
+                (this.state.dialog ? (<Dialog
                   title="Data received:"
                   actions={actions}
                   modal={true}
@@ -321,7 +352,9 @@ class DataApi extends Component {
                  </TableBody>
               </Table>
                 </Dialog>) : ''
-                )}
+                )
+              )}
+
                </div>
               </Tab>
           </Tabs>
