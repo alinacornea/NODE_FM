@@ -142,4 +142,28 @@ module.exports = function(app){
          });
      });
 
+    //upload filemaker image
+    app.post('/filemaker-image', function(req, res, next){
+      const database = decodeURIComponent(req.body.solution);
+      const layout = decodeURIComponent(req.body.layout);
+      // const field = decodeURIComponent(req.body.field);
+      let data = {};
+      data[`NODE`] = decodeURIComponent(req.body.image);
+
+         return axios({
+             url: `https://fm107.beezwax.net/fmi/rest/api/record/${database}/${layout}`,
+             method: "POST",
+             headers: {
+               'FM-Data-token': req.body.token,
+               'Content-type':'application/json'
+             },
+             data: {
+                 data: data
+               }
+       }).then(response => {
+         res.send(response.data)
+         }).catch(err => {
+              console.log('Error: ', err)
+         });
+     });
 };

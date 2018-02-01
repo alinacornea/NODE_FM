@@ -4,8 +4,8 @@ import  axios from 'axios';
 import './Programs.css';
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
-import Lock from 'material-ui/svg-icons/action/lock';
-import Account from 'material-ui/svg-icons/action/account-box';
+// import Lock from 'material-ui/svg-icons/action/lock';
+// import Account from 'material-ui/svg-icons/action/account-box';
 
 const input = {
    WebkitBoxShadow: '0 0 0 1000px lightgrey inset'
@@ -18,22 +18,15 @@ class Home extends Component {
 
   constructor(props) {
     super(props);
-    const storedMessage = localStorage.getItem('successMessage');
-    let successMessage = '';
-
-    if (storedMessage) {
-      successMessage = storedMessage;
-      localStorage.removeItem('successMessage');
-    }
-
     this.state = {
       errors: {},
-      successMessage,
+      message: '',
       data: {
         user: '',
         password: '',
         solution: '',
-        layout:''
+        layout:'',
+        server: ''
       }
     };
   }
@@ -44,22 +37,28 @@ class Home extends Component {
 
     const user = encodeURIComponent(this.state.data.user);
     const password = encodeURIComponent(this.state.data.password);
+    const server = encodeURIComponent(this.state.data.server);
     const solution = encodeURIComponent(this.state.data.solution);
     const layout = encodeURIComponent(this.state.data.layout);
 
-    const formData = `user=${user}&password=${password}&solution=${solution}&layout=${layout}`;
+    const formData = `user=${user}&password=${password}&server=${server}&solution=${solution}&layout=${layout}`;
 
     axios({
       method: 'post',
       url: '/filemaker-login',
       data: formData
     }).then(res => {
-        this.setState({errors: {}
-      });
-      Auth.authenticateUser(res.data.token);
-      Auth.setInfo(solution, layout);
-      this.props.toggleAuthenticateStatus();
-      this.props.history.push('/dataapi');
+      console.log(res);
+      if (!res.data.error){
+        Auth.authenticateUser(res.data.token);
+        Auth.setInfo(solution, layout);
+        this.props.toggleAuthenticateStatus();
+        this.props.history.push('/dataapi');
+      }
+      const errors = res.data.errors;
+      const message = res.data.message;
+
+      this.setState({errors, message: message});
     }).catch(err => {
       console.log(err);
     })
@@ -77,7 +76,7 @@ class Home extends Component {
   }
 
   render() {
-    const {data, errors, successMessage} = this.state;
+    const {data, errors, message} = this.state;
 
     return (
 
@@ -85,10 +84,44 @@ class Home extends Component {
       <h2 className="card-heading">Authenticate with FM Solution</h2>
         <form action="" onSubmit={this.processForm}>
 
-          {successMessage && <p className="success-message">{successMessage}</p>}
-          {errors.summary && <p className="error-message">{errors.summary}</p>}
+          {message && <p className="error-message">{message}</p>}
+          <div className="field-line">
+            <TextField
+              floatingLabelText="Enter Server Web Address"
+              name="server"
+              fullWidth={true}
+              inputStyle={input}
+              style={margin}
+              onChange={this.changeData}
+              errorText={errors.server}
+              value={data.server}
+            />
+          </div>
+          <div className="field-line">
+            <TextField
+              floatingLabelText="Enter FM Solution"
+              name="solution"
+              fullWidth={true}
+              inputStyle={input}
+              style={margin}
+              onChange={this.changeData}
+              errorText={errors.solution}
+              value={data.solution}
+            />
+          </div>
+          <div className="field-line">
+            <TextField
+              floatingLabelText="Enter Layout"
+              name="layout"
+              fullWidth={true}
+              inputStyle={input}
+              style={margin}
+              onChange={this.changeData}
+              errorText={errors.layout}
+              value={data.layout}
+            />
+          </div>
 
-          <Account/>
           <div className="field-line">
             <TextField
               inputStyle={input}
@@ -102,7 +135,6 @@ class Home extends Component {
             />
           </div>
 
-          <Lock/>
           <div className="field-line">
             <TextField
               floatingLabelText="Enter Password"
@@ -114,32 +146,6 @@ class Home extends Component {
               onChange={this.changeData}
               errorText={errors.password}
               value={data.password}
-            />
-          </div>
-          <Lock/>
-          <div className="field-line">
-            <TextField
-              floatingLabelText="Enter FM Solution"
-              name="solution"
-              fullWidth={true}
-              inputStyle={input}
-              style={margin}
-              onChange={this.changeData}
-              errorText={errors.solution}
-              value={data.solution}
-            />
-          </div>
-          <Lock/>
-          <div className="field-line">
-            <TextField
-              floatingLabelText="Enter Layout"
-              name="layout"
-              fullWidth={true}
-              inputStyle={input}
-              style={margin}
-              onChange={this.changeData}
-              errorText={errors.layout}
-              value={data.layout}
             />
           </div>
 

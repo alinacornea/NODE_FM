@@ -5,6 +5,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 import {Tabs, Tab} from 'material-ui/Tabs';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
+import Dropzone from 'react-dropzone';
 
 import {
   Table,
@@ -22,6 +23,26 @@ const input = {
    WebkitBoxShadow: '0 0 0 1000px lightgrey inset'
 }
 
+var styles = {
+  dialogRoot: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingTop: 0
+  },
+  dialogContent: {
+    position: 'relative',
+    width: '90%',
+    maxWidth: 500
+  },
+  dialogBody: {
+    paddingBottom: 0
+  },
+  dropzone:{
+    border:'none',
+  }
+};
+
 class DataApi extends Component {
   constructor(props){
     super(props);
@@ -30,7 +51,11 @@ class DataApi extends Component {
       dialog: false,
       update: false,
       del: false,
+      open: false,
       error: false,
+      file: '',
+      type: '',
+      preview: '',
       data: {
         field: '',
         layout: '',
@@ -40,8 +65,49 @@ class DataApi extends Component {
     }
   }
 
+  newPicture = (files) => {
+    this.setState({preview: files[0].preview, open:true, type: files[0].type});
+
+    var file = files[0];
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const image = encodeURIComponent(event.target.result);
+        this.setState({file: image})
+      };
+      reader.readAsDataURL(file);
+    }
+
+  savePicture = () => {
+    const solution = encodeURIComponent(Auth.getSolution());
+    const layout = encodeURIComponent(Auth.getLayout());
+    const token = encodeURIComponent(Auth.getToken());
+    const field = encodeURIComponent(this.state.data.field);
+    const  image = this.state.file;
+    const  type = encodeURIComponent(this.state.type);
+
+    const send = {
+      type: type,
+      image: image,
+      solution: solution,
+      token: token,
+      layout: layout,
+      field: field
+    }
+
+    axios({
+      method: 'post',
+      url: '/filemaker-image',
+      data: send
+    }).then(res => {
+      console.log(res);
+      this.setState({ open:false})
+    }).catch(err => {
+      console.log(err);
+    })
+}
+
   handleClose = () => {
-    this.setState({dialog: false, update: false, del: false, error: false});
+    this.setState({dialog: false, update: false, del: false, error: false, open:false});
   };
 
   onChange = (event, value) => {
@@ -116,7 +182,7 @@ class DataApi extends Component {
       console.log(err);
     });
   }
-
+  //delete record
   deleteRecord = () => {
     const solution = encodeURIComponent(Auth.getSolution());
     const token = encodeURIComponent(Auth.getToken());
@@ -144,6 +210,7 @@ class DataApi extends Component {
     });
   }
 
+  //get record
   getRecord = () => {
     const solution = encodeURIComponent(Auth.getSolution());
     const token = encodeURIComponent(Auth.getToken());
@@ -161,7 +228,6 @@ class DataApi extends Component {
       url: '/filemaker-get',
       data: send
     }).then(res => {
-      console.log(res);
 
       const data = this.state.data;
       data['layout'] = '';
@@ -190,6 +256,10 @@ class DataApi extends Component {
         onClick={this.handleClose}
       />
     ];
+    const action = [
+      <RaisedButton type="submit" label="Upload Picture" fullWidth={true} style={{marginBottom:20}} primary onClick={this.savePicture}/>
+    ]
+
     return (
         <div>
           <Tabs>
@@ -214,7 +284,7 @@ class DataApi extends Component {
                     fullWidth={true}
                     value={data.newData}/>
                 <div className="button-line">
-                  <RaisedButton type="submit"label="Update"  fullWidth={true} style={{marginTop:30}} primary onClick={this.updateData}/>
+                  <RaisedButton type="submit"label="Update"  fullWidth={true} style={{marginTop:30}} secondary onClick={this.updateData}/>
                 </div>
                 {(this.state.update ? (<Dialog
                   title="Message:"
@@ -255,7 +325,7 @@ class DataApi extends Component {
                     onChange={this.onChange}
                     value={data.newData}/>
                   <div className="button-line">
-                    <RaisedButton type="submit" label="Create New Record" fullWidth={true} style={{marginTop:30}} primary onClick={this.createField}/>
+                    <RaisedButton type="submit" label="Create New Record" fullWidth={true} style={{marginTop:30}} secondary onClick={this.createField}/>
                   </div>
 
                </div>
@@ -281,7 +351,7 @@ class DataApi extends Component {
                    onChange={this.onChange}
                    value={data.recordId}/>
                   <div className="button-line">
-                    <RaisedButton type="submit" label="Delete Record" fullWidth={true} style={{marginTop:30}} primary onClick={this.deleteRecord}/>
+                    <RaisedButton type="submit" label="Delete Record" fullWidth={true} style={{marginTop:30}} secondary onClick={this.deleteRecord}/>
                   </div>
                   {(this.state.del ? (<Dialog
                     title="Message:"
@@ -315,7 +385,7 @@ class DataApi extends Component {
                  value={data.recordId}/>
 
                 <div className="button-line">
-                 <RaisedButton type="submit" label="Get Record" fullWidth={true} style={{marginTop:30}} primary onClick={this.getRecord}/>
+                 <RaisedButton type="submit" label="Get Record" fullWidth={true} style={{marginTop:30}} secondary onClick={this.getRecord}/>
                 </div>
                 {(this.state.error ? (<Dialog
                   title="Error retrieved:"
@@ -354,7 +424,31 @@ class DataApi extends Component {
                 </Dialog>) : ''
                 )
               )}
+               </div>
+              </Tab>
 
+              <Tab label="Upload picture" >
+               <div className="recordMid">
+
+               <Dropzone multiple={false} accept="image/*" style={styles.dropzone} onDrop={this.newPicture}>
+                 <RaisedButton label="Click to add a picture..." secondary fullWidth={true} />
+               </Dropzone>
+               <div>
+               </div>
+               <div>
+                 <Dialog
+                   title="New picture"
+                   actions={action}
+                   modal={false}
+                   open={this.state.open}
+                   onRequestClose={ this.handleClose }
+                   contentStyle={ styles.dialogContent }
+                   bodyStyle={ styles.dialogBody }
+                   style={ styles.dialogRoot }
+                   repositionOnUpdate={ false } >
+                   <img src={this.state.preview} width="100%" height="100%" alt=""/>
+                 </Dialog>
+               </div>
                </div>
               </Tab>
           </Tabs>

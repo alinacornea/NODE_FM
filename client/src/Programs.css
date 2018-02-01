@@ -19,7 +19,7 @@
 
 .login{
   margin: 0 auto;
-  height:500px;
+  height:550px;
   background-color: lightgrey;
   width:50%;
   margin-top: 7%;
@@ -30,4 +30,9 @@
 .card-heading{
   text-align: center;
   margin-top: 0;
+}
+
+.error-message{
+  text-align: center;
+  color:red;
 }
