@@ -1,21 +1,25 @@
 import React, { Component } from 'react';
-// import logo from './logo.svg';
+import { BrowserRouter as Router, Route, Link, Redirect} from 'react-router-dom';
+
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
-// import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
-import { BrowserRouter as Router, Route, Link, Redirect} from 'react-router-dom';
-
 import ActionHome from 'material-ui/svg-icons/action/home';
 import Toolbar from 'material-ui/Toolbar';
 
-import './App.css';
 import Programs from './Programs';
 import Filemaker from './Filemaker';
 import DataApi from './DataApi';
 import Home from './Home';
 import Auth from './Auth';
 import Logout from './Logout';
+import './App.css';
+
+const style = {
+    margin:10,
+    fontStyle: 'bold',
+    color: '#ff8a65'
+  }
 
 const LoggedOutRoute = ({ component: Component, ...rest }) => (
   <Route {...rest} render={props => (
@@ -71,9 +75,9 @@ class App extends Component {
                <Link to="/"><ActionHome className="homepage_main"color='black' style={{width:35, height:35}}/> </Link>
               </div>
                 <div className="top-bar-right" style={{ margin:10}}>
-                  <Link to="/programs" style={{ margin:10}}>Programs</Link>
-                  <Link to="/filemaker"style={{ margin:10}}>Filemaker</Link>
-                  <Link to="/dataapi"style={{ margin:10}}>DataApi</Link>
+                  <Link to="/programs" style={style}>Program Events</Link>
+                  <Link to="/filemaker"style={style}>Booking Events</Link>
+                  <Link to="/dataapi"style={style}>Data API</Link>
                 </div>
        </Toolbar>
           {this.state.authenticated ? (

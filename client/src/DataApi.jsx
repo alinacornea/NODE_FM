@@ -1,20 +1,13 @@
 import React, { Component } from 'react';
+import Dropzone from 'react-dropzone';
 import  axios from 'axios';
+//material ui
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import {Tabs, Tab} from 'material-ui/Tabs';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
-import Dropzone from 'react-dropzone';
-
-import {
-  Table,
-  TableBody,
-  TableHeader,
-  TableHeaderColumn,
-  TableRow,
-  TableRowColumn,
-} from 'material-ui/Table';
+import { Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn } from 'material-ui/Table';
 
 import Auth from './Auth';
 import './Programs.css';
@@ -47,12 +40,12 @@ class DataApi extends Component {
   constructor(props){
     super(props);
     this.state = {
+      message: '',
       info:[],
       dialog: false,
-      update: false,
-      del: false,
       open: false,
       error: false,
+      record: '',
       file: '',
       type: '',
       preview: '',
@@ -78,19 +71,15 @@ class DataApi extends Component {
     }
 
   savePicture = () => {
-    const solution = encodeURIComponent(Auth.getSolution());
-    const layout = encodeURIComponent(Auth.getLayout());
-    const token = encodeURIComponent(Auth.getToken());
+    const base = Auth.getBaseInfo();
     const field = encodeURIComponent(this.state.data.field);
-    const  image = this.state.file;
-    const  type = encodeURIComponent(this.state.type);
+    const type = encodeURIComponent(this.state.type);
+    const image = this.state.file;
 
     const send = {
+      base,
       type: type,
       image: image,
-      solution: solution,
-      token: token,
-      layout: layout,
       field: field
     }
 
@@ -100,14 +89,19 @@ class DataApi extends Component {
       data: send
     }).then(res => {
       console.log(res);
-      this.setState({ open:false})
+      let message = res.data.message;
+      let record = res.data.data.recordId;
+      this.setState({open:false, message: message, record: record})
+      setInterval(() => {
+              this.setState({message: ''})
+          }, 6000);
     }).catch(err => {
       console.log(err);
     })
 }
 
   handleClose = () => {
-    this.setState({dialog: false, update: false, del: false, error: false, open:false});
+    this.setState({dialog: false, error: false, open:false});
   };
 
   onChange = (event, value) => {
@@ -121,17 +115,13 @@ class DataApi extends Component {
 
   //update existing field
   updateData = () => {
-    const solution = encodeURIComponent(Auth.getSolution());
-    const layout = encodeURIComponent(Auth.getLayout());
-    const token = encodeURIComponent(Auth.getToken());
+    const base = Auth.getBaseInfo();
     const field = encodeURIComponent(this.state.data.field);
     const recordId = encodeURIComponent(this.state.data.recordId);
     const newData = encodeURIComponent(this.state.data.newData);
 
     const send = {
-      solution: solution,
-      token: token,
-      layout: layout,
+      base,
       field: field,
       recordId: recordId,
       data: newData
@@ -143,10 +133,14 @@ class DataApi extends Component {
       data: send
     }).then(res => {
       const data = this.state.data;
+      let message = res.data.message;
       data['field'] = '';
       data['recordId'] = '';
       data['newData'] = '';
-      this.setState({data, update: true})
+      this.setState({data, message: message})
+      setInterval(() => {
+              this.setState({message: ''})
+          }, 4000);
     }).catch(err => {
       console.log(err);
     })
@@ -154,16 +148,12 @@ class DataApi extends Component {
 
   //create new field
   createField = () => {
-    const solution = encodeURIComponent(Auth.getSolution());
-    const layout = encodeURIComponent(Auth.getLayout());
-    const token = encodeURIComponent(Auth.getToken());
+    const base = Auth.getBaseInfo();
     const field = encodeURIComponent(this.state.data.field);
     const newData = encodeURIComponent(this.state.data.newData);
 
     const send = {
-      solution: solution,
-      token: token,
-      layout: layout,
+      base,
       field: field,
       newData: newData
     }
@@ -173,24 +163,28 @@ class DataApi extends Component {
       url: '/filemaker-create',
       data: send
     }).then(res => {
-      const data = this.state.data;
+      let data = this.state.data;
+      let message = res.data.message;
+      data['layout'] = '';
       data['field'] = '';
       data['newData'] = '';
 
-      this.setState({data})
+      this.setState({data, message: message})
+      setInterval(() => {
+              this.setState({message: ''})
+          }, 4000);
     }).catch(err => {
       console.log(err);
     });
   }
+
   //delete record
   deleteRecord = () => {
-    const solution = encodeURIComponent(Auth.getSolution());
-    const token = encodeURIComponent(Auth.getToken());
+    const base = Auth.getBaseInfo();
     const layout = encodeURIComponent(this.state.data.layout);
     const recordId = encodeURIComponent(this.state.data.recordId);
     const send = {
-      solution: solution,
-      token: token,
+      base,
       layout: layout,
       recordId: recordId
     }
@@ -201,10 +195,14 @@ class DataApi extends Component {
       data: send
     }).then(res => {
       const data = this.state.data;
+      let message = res.data.message;
       data['layout'] = '';
       data['recordId'] = '';
 
-      this.setState({data, del: true})
+      this.setState({data, message: message})
+      setInterval(() => {
+              this.setState({message: ''})
+          }, 4000);
     }).catch(err => {
       console.log(err);
     });
@@ -212,13 +210,11 @@ class DataApi extends Component {
 
   //get record
   getRecord = () => {
-    const solution = encodeURIComponent(Auth.getSolution());
-    const token = encodeURIComponent(Auth.getToken());
+    const base = Auth.getBaseInfo();
     const layout = encodeURIComponent(this.state.data.layout);
     const recordId = encodeURIComponent(this.state.data.recordId);
     const send = {
-      solution: solution,
-      token: token,
+      base,
       layout: layout,
       recordId: recordId
     }
@@ -246,7 +242,7 @@ class DataApi extends Component {
   }
 
   render() {
-    const { data } = this.state;
+    const { data, message, record } = this.state;
     const info = this.state.info;
 
     const actions = [
@@ -265,6 +261,7 @@ class DataApi extends Component {
           <Tabs>
              <Tab label="Update Record" style={{height: '70px'}}>
              <div className="recordMid">
+             {message && <p className="display-message">{message}</p>}
                   <TextField
                      floatingLabelText="Enter Field"
                      name="field"
@@ -286,20 +283,12 @@ class DataApi extends Component {
                 <div className="button-line">
                   <RaisedButton type="submit"label="Update"  fullWidth={true} style={{marginTop:30}} secondary onClick={this.updateData}/>
                 </div>
-                {(this.state.update ? (<Dialog
-                  title="Message:"
-                  actions={actions}
-                  modal={true}
-                  open={this.state.update}
-                >
-                  Your record was updated succesfully!!
-                </Dialog>) : ''
-                )}
               </div>
               </Tab>
 
               <Tab label="Create Record" >
                 <div className="recordMid">
+                {message && <p className="display-message">{message}</p>}
                   <TextField
                     inputStyle={input}
                     floatingLabelText="Enter Layout"
@@ -310,7 +299,7 @@ class DataApi extends Component {
                     value={data.layout}/>
                   <TextField
                     inputStyle={input}
-                    floatingLabelText="New Field"
+                    floatingLabelText="Enter Field"
                     name="field"
                     onChange={this.onChange}
                     rows={2}
@@ -318,7 +307,7 @@ class DataApi extends Component {
                     value={data.field}/>
                   <TextField
                     inputStyle={input}
-                    floatingLabelText="New Data"
+                    floatingLabelText="Enter New Data"
                     name="newData"
                     rows={2}
                     fullWidth={true}
@@ -333,6 +322,7 @@ class DataApi extends Component {
 
               <Tab label="Delete Record" >
                <div className="recordMid">
+               {message && <p className="display-message">{message}</p>}
                    <TextField
                    inputStyle={input}
                    floatingLabelText="Enter Layout"
@@ -353,15 +343,6 @@ class DataApi extends Component {
                   <div className="button-line">
                     <RaisedButton type="submit" label="Delete Record" fullWidth={true} style={{marginTop:30}} secondary onClick={this.deleteRecord}/>
                   </div>
-                  {(this.state.del ? (<Dialog
-                    title="Message:"
-                    actions={actions}
-                    modal={true}
-                    open={this.state.del}
-                  >
-                    Your record was deleted succesfully!!
-                  </Dialog>) : ''
-                  )}
                </div>
               </Tab>
               <Tab label="Get Record" >
@@ -393,7 +374,7 @@ class DataApi extends Component {
                   modal={true}
                   open={this.state.error}
                 >
-                  Make sure the record ID is a number and exist!
+                  This record does not exists!
                 </Dialog>) :
                 (this.state.dialog ? (<Dialog
                   title="Data received:"
@@ -429,7 +410,7 @@ class DataApi extends Component {
 
               <Tab label="Upload picture" >
                <div className="recordMid">
-
+               {message && <p className="display-message">{message} <br/> New record: {record}</p>}
                <Dropzone multiple={false} accept="image/*" style={styles.dropzone} onDrop={this.newPicture}>
                  <RaisedButton label="Click to add a picture..." secondary fullWidth={true} />
                </Dropzone>

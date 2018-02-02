@@ -48,10 +48,9 @@ class Home extends Component {
       url: '/filemaker-login',
       data: formData
     }).then(res => {
-      console.log(res);
       if (!res.data.error){
         Auth.authenticateUser(res.data.token);
-        Auth.setInfo(solution, layout);
+        Auth.setInfo(solution, layout, server);
         this.props.toggleAuthenticateStatus();
         this.props.history.push('/dataapi');
       }

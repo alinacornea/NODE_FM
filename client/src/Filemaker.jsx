@@ -30,9 +30,10 @@ class Filemaker extends Component {
     fetch('/filemaker')
       .then(res => res.json())
       .then((res) => {
+        console.log(res.data);
         for (var key in res.data) {
-            for(var id in res.data[key].portalData.AttendeeSignIn){
-              let data = res.data[key].portalData.AttendeeSignIn[id];
+            for(var id in res.data[key].portalData.HallBooking){
+              let data = res.data[key].portalData.HallBooking[id];
               this.setState({ info: [...this.state.info, data] })
             }
           }
@@ -46,19 +47,19 @@ class Filemaker extends Component {
         <h4>filemaker --> node: {this.state.nodeR} </h4>
         <h3>DATA</h3>
           <Table>
-            <TableHeader>
+            <TableHeader adjustForCheckbox={false} displaySelectAll={false}>
               <TableRow>
-                <TableHeaderColumn>Name</TableHeaderColumn>
-                <TableHeaderColumn>Birthday</TableHeaderColumn>
-                <TableHeaderColumn>ZipCode</TableHeaderColumn>
+                <TableHeaderColumn>Booking Name</TableHeaderColumn>
+                <TableHeaderColumn>Booking Date</TableHeaderColumn>
+                <TableHeaderColumn>Expected Guests</TableHeaderColumn>
               </TableRow>
             </TableHeader>
-            <TableBody>
+            <TableBody displayRowCheckbox={false}>
                 {data.map((item, idx) =>
                     <TableRow key={idx}>
-                      <TableRowColumn>{item['AttendeeSignIn::Name']}</TableRowColumn>
-                      <TableRowColumn>{item['AttendeeSignIn::DOB']}</TableRowColumn>
-                      <TableRowColumn>{item['AttendeeSignIn::ZipCode']}</TableRowColumn>
+                      <TableRowColumn>{item['HallBooking::BookingName']}</TableRowColumn>
+                      <TableRowColumn>{item['HallBooking::Date']}</TableRowColumn>
+                      <TableRowColumn>{item['HallBooking::ExpectedGuests']}</TableRowColumn>
                     </TableRow>
                 )}
            </TableBody>

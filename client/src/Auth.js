@@ -29,9 +29,19 @@ class Auth {
     return localStorage.getItem('layout');
   }
 
-  static setInfo(solution, layout) {
+  static getBaseInfo(){
+    let base = {
+      server: encodeURIComponent(localStorage.getItem('server')),
+      solution: encodeURIComponent(localStorage.getItem('solution')),
+      token: encodeURIComponent(localStorage.getItem('token')),
+      layout: encodeURIComponent(localStorage.getItem('layout'))
+    }
+    return base;
+  }
+  static setInfo(solution, layout, server) {
     localStorage.setItem('solution', solution);
     localStorage.setItem('layout', layout);
+    localStorage.setItem('server', server);
   }
 
 
