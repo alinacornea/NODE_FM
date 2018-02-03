@@ -49,3 +49,29 @@
   font-family: Helvetica;
   color: #5c6bc0;
 }
+
+.containerInfo{
+  width: 70%;
+  margin: 0 auto;
+  height: 500px;
+  background-color: lightgrey;
+  margin-top: 10%;
+  padding:60px;
+  border: 1px solid grey;
+
+}
+
+.programName{
+  text-align: center;
+  color: #5c6bc0;
+  margin-top: 0;
+  font-size: 27px;
+}
+
+.programType{
+  margin-top: 30px;
+  font-size: 23px;
+  text-align: center;
+  color: #4d4d4d;
+
+}

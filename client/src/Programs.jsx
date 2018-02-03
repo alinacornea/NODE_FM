@@ -1,6 +1,4 @@
 import React, { Component } from 'react';
-import Dialog from 'material-ui/Dialog';
-import FlatButton from 'material-ui/FlatButton';
 import {
   Table,
   TableBody,
@@ -11,6 +9,7 @@ import {
 } from 'material-ui/Table';
 
 import './Programs.css';
+
 const style = {
   fontSize: 10
 }
@@ -18,10 +17,9 @@ const style = {
 class Programs extends Component {
   constructor(props){
     super(props);
+
     this.state = {
-      data: [],
-      dialog: false,
-      row: ''
+      data: []
     }
   }
 
@@ -31,29 +29,18 @@ class Programs extends Component {
       .then((res) => {this.setState({ data: res })
       })
   }
-  handleClose = () => {
-    this.setState({dialog:false})
-  }
+
+  // handleClose = () => {
+  //   this.setState({dialog:false})
+  // }
 
   seeDetails = (row, col, event) => {
-    console.log(row);
-    console.log(this.state.data[row]);
-    console.log(this.props);
-    console.log(event.target.innerHTML)
-    this.setState({dialog: true})
+    let data = this.state.data[row];
+    this.props.history.push({pathname: '/program-info', state: { data: data}});
   }
 
   render() {
-    // console.log(this.state.data);
-    const { data, dialog} = this.state;
-
-    const actions = [
-      <FlatButton
-        label="OK"
-        primary={true}
-        onClick={this.handleClose}
-      />
-    ];
+    const { data} = this.state;
     return (
       <div>
       <h3 className="programsName">Programs Events</h3>
@@ -69,7 +56,7 @@ class Programs extends Component {
             </TableHeader>
             <TableBody displayRowCheckbox={false} showRowHover={true}>
              {data.map((item, idx) =>
-                    <TableRow key={idx} rowNumber={parseInt(item.recordId, 10)}>
+                    <TableRow key={idx}>
                       <TableRowColumn style={style}> {item.recordId} </TableRowColumn>
                       <TableRowColumn>{item.fieldData['Program::ProgramName']}</TableRowColumn>
                       <TableRowColumn>{item.fieldData.EventName}</TableRowColumn>
@@ -79,14 +66,6 @@ class Programs extends Component {
               )}
               </TableBody>
           </Table>
-          {(dialog ?   <Dialog
-              title="Error:"
-              actions={actions}
-              modal={true}
-              open={this.state.dialog}
-            >
-              Record is missing! {this.state.row}
-            </Dialog> : '')}
       </div>
     );
   }
@@ -94,3 +73,12 @@ class Programs extends Component {
 
 
 export default Programs;
+
+
+// const actions = [
+//   <FlatButton
+//     label="OK"
+//     primary={true}
+//     onClick={this.handleClose}
+//   />
+// ];

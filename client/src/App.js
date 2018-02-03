@@ -10,6 +10,8 @@ import Toolbar from 'material-ui/Toolbar';
 import Programs from './Programs';
 import Filemaker from './Filemaker';
 import DataApi from './DataApi';
+import DisplayInfo from './DisplayInfo';
+
 import Home from './Home';
 import Auth from './Auth';
 import Logout from './Logout';
@@ -90,6 +92,7 @@ class App extends Component {
             <PrivateRoute path="/programs" component={Programs}/>
             <PrivateRoute path="/dataapi" component={DataApi}/>
             <PrivateRoute path="/filemaker" component={Filemaker}/>
+            <PrivateRoute path="/program-info" component={DisplayInfo}/>
       </div>
       </Router>
         <div className="footer">
