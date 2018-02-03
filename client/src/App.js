@@ -16,9 +16,10 @@ import Logout from './Logout';
 import './App.css';
 
 const style = {
-    margin:10,
-    fontStyle: 'bold',
-    color: '#ff8a65'
+    margin:15,
+    fontWeight: 'bold',
+    color: '#ff8a65',
+    fontFamily:'Helvetica'
   }
 
 const LoggedOutRoute = ({ component: Component, ...rest }) => (
@@ -68,6 +69,7 @@ class App extends Component {
   render() {
     return (
     <MuiThemeProvider muiTheme={getMuiTheme(darkBaseTheme)}>
+    <div>
       <Router>
       <div>
         <Toolbar style={{backgroundColor: '#EAEAEA'}}>
@@ -75,8 +77,8 @@ class App extends Component {
                <Link to="/"><ActionHome className="homepage_main"color='black' style={{width:35, height:35}}/> </Link>
               </div>
                 <div className="top-bar-right" style={{ margin:10}}>
-                  <Link to="/programs" style={style}>Program Events</Link>
-                  <Link to="/filemaker"style={style}>Booking Events</Link>
+                  <Link to="/programs" style={style}>Programs</Link>
+                  <Link to="/filemaker"style={style}>Bookings</Link>
                   <Link to="/dataapi"style={style}>Data API</Link>
                 </div>
        </Toolbar>
@@ -90,6 +92,11 @@ class App extends Component {
             <PrivateRoute path="/filemaker" component={Filemaker}/>
       </div>
       </Router>
+        <div className="footer">
+          <p className="textFooter">Beezwax, February 2018 <br/>
+          <a className="linkWeb" href="https://beezwax.net/"> www.beezwax.net </a></p>
+        </div>
+      </div>
     </MuiThemeProvider>
     );
   }

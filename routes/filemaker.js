@@ -78,7 +78,24 @@ module.exports = function(app){
           message: 'Your record was updated succesfully.'
          });
         }).catch(err => {
-          console.log('error: ', err)
+          if (err.response.data.errorCode === '101'){
+            return res.json({
+              error: true,
+              message: 'Check the form for errors.',
+              errors: {
+                recordId: 'Record Id is missing!'
+              }
+            });
+          }
+          if (err.response.data.errorCode === '102'){
+            return res.json({
+              error: true,
+              message: 'Check the form for errors.',
+              errors: {
+                field: 'Field is missing!'
+              }
+            });
+          }
         });
     });
 
@@ -89,9 +106,9 @@ module.exports = function(app){
     app.post('/filemaker-create', function(req, res, next){
       const server = decodeURIComponent(req.body.base.server);
       const database = decodeURIComponent(req.body.base.solution);
-      const layout = decodeURIComponent(req.body.base.layout);
+      const layout = decodeURIComponent(req.body.layout);
       const field = decodeURIComponent(req.body.field);
-
+      console.log(layout);
       let data = {};
       data[`${field}`] = decodeURIComponent(req.body.newData);
 
@@ -113,7 +130,25 @@ module.exports = function(app){
           });
 
          }).catch(err => {
-              console.log('Error: ', err)
+           console.log(err.response.data);
+           if (err.response.data.errorCode === '102'){
+             return res.json({
+               error: true,
+               message: 'Check the form for errors.',
+               errors: {
+                 field: 'Field is missing!'
+               }
+             });
+           }
+           if (err.response.data.errorCode === '105'){
+             return res.json({
+               error: true,
+               message: 'Check the form for errors.',
+               errors: {
+                 layout: 'Layout is missing!'
+               }
+             });
+           }
          });
      });
 
@@ -140,7 +175,25 @@ module.exports = function(app){
            message: 'Your record was deleted succesfully.'
           });
          }).catch(err => {
-              console.log('Error: ', err)
+           console.log(err.response.data);
+           if (err.response.data.errorCode === '101'){
+             return res.json({
+               error: true,
+               message: 'Check the form for errors.',
+               errors: {
+                 recordId: 'Record is missing!'
+               }
+             });
+           }
+           if (err.response.data.errorCode === '105'){
+             return res.json({
+               error: true,
+               message: 'Check the form for errors.',
+               errors: {
+                 layout: 'Layout is missing!'
+               }
+             });
+           }
          });
      });
 

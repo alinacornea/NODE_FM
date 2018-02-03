@@ -54,10 +54,12 @@ class Home extends Component {
         this.props.toggleAuthenticateStatus();
         this.props.history.push('/dataapi');
       }
-      const errors = res.data.errors;
-      const message = res.data.message;
+      else{
+        const errors = res.data.errors;
+        const message = res.data.message;
+        this.setState({errors, message: message});
+      }
 
-      this.setState({errors, message: message});
     }).catch(err => {
       console.log(err);
     })

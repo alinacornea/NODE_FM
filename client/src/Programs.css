@@ -9,7 +9,7 @@
 
 .recordMid{
   margin: 0 auto;
-  height:350px;
+  height:400px;
   background-color: lightgrey;
   width:60%;
   margin-top: 15%;
@@ -42,4 +42,10 @@
   color:green;
   font-family: Helvetica;
   font-size: 14px;
+}
+
+.programsName{
+  text-align: center;
+  font-family: Helvetica;
+  color: #5c6bc0;
 }

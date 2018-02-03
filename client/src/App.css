@@ -26,3 +26,27 @@
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+.footer{
+    border-top: 1px solid #E7E7E7;
+    height: 60px;
+    width:100%;
+    position: fixed;
+    padding:10px;
+    bottom: 0;
+    left:0;
+    background-color: #f8f8f8;
+}
+
+.textFooter{
+  text-align: right;
+  margin-right: 60px;
+  font-family: Helvetica;
+  font-style: italic;
+  font-size: 14px;
+}
+.linkWeb{
+  font-size: 16px;
+  color: #5c6bc0;
+  margin-right: 20px;
+}

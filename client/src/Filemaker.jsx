@@ -30,7 +30,7 @@ class Filemaker extends Component {
     fetch('/filemaker')
       .then(res => res.json())
       .then((res) => {
-        console.log(res.data);
+        // console.log(res.data);
         for (var key in res.data) {
             for(var id in res.data[key].portalData.HallBooking){
               let data = res.data[key].portalData.HallBooking[id];
@@ -44,8 +44,7 @@ class Filemaker extends Component {
     const data = this.state.info;
     return (
         <div className="App">
-        <h4>filemaker --> node: {this.state.nodeR} </h4>
-        <h3>DATA</h3>
+        <h3 className="programsName">Bookings</h3>
           <Table>
             <TableHeader adjustForCheckbox={false} displaySelectAll={false}>
               <TableRow>
