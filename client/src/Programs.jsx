@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import axios from 'axios';
 import {
   Table,
   TableBody,
@@ -9,7 +10,9 @@ import {
 } from 'material-ui/Table';
 
 import './Programs.css';
+import Auth from './Auth';
 
+//style constants
 const style = {
   fontSize: 10
 }
@@ -17,30 +20,40 @@ const style = {
 class Programs extends Component {
   constructor(props){
     super(props);
-
     this.state = {
       data: []
     }
   }
 
   componentDidMount() {
-    fetch('/programs')
-      .then(res => res.json())
-      .then((res) => {this.setState({ data: res })
-      })
+    const base = Auth.getBaseInfo();
+    const layout = encodeURIComponent('AllProgramsEvents');
+    const send = {
+      base,
+      layout: layout
+    }
+    axios({
+      method: 'POST',
+      url: '/programs',
+      data: send
+    }).then((res) => {
+        let data = res.data;
+        this.setState({ data: data })
+    }).catch(err => {
+      const data = this.state.data;
+      data['layout'] = '';
+      data['recordId'] = '';
+      this.setState({data, error: true});
+    });
   }
 
-  // handleClose = () => {
-  //   this.setState({dialog:false})
-  // }
-
-  seeDetails = (row, col, event) => {
+  seeDetails = (row) => {
     let data = this.state.data[row];
     this.props.history.push({pathname: '/program-info', state: { data: data}});
   }
 
   render() {
-    const { data} = this.state;
+    const { data } = this.state;
     return (
       <div>
       <h3 className="programsName">Programs Events</h3>
@@ -73,12 +86,3 @@ class Programs extends Component {
 
 
 export default Programs;
-
-
-// const actions = [
-//   <FlatButton
-//     label="OK"
-//     primary={true}
-//     onClick={this.handleClose}
-//   />
-// ];

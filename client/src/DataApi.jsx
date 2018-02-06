@@ -70,27 +70,25 @@ class DataApi extends Component {
         this.setState({file: image})
       };
       reader.readAsDataURL(file);
-    }
+  }
 
   savePicture = () => {
     const base = Auth.getBaseInfo();
     const field = encodeURIComponent(this.state.data.field);
     const type = encodeURIComponent(this.state.type);
     const image = this.state.file;
-
     const send = {
       base,
       type: type,
       image: image,
       field: field
     }
-
     axios({
       method: 'post',
       url: '/filemaker-image',
       data: send
     }).then(res => {
-      console.log(res);
+      // console.log(res);
       let message = res.data.message;
       let record = res.data.data.recordId;
       this.setState({open:false, message: message, record: record})
@@ -100,7 +98,7 @@ class DataApi extends Component {
     }).catch(err => {
       console.log(err);
     })
-}
+  }
 
   handleClose = () => {
     this.setState({dialog: false, error: false, open:false});
@@ -121,7 +119,6 @@ class DataApi extends Component {
     const field = encodeURIComponent(this.state.data.field);
     const recordId = encodeURIComponent(this.state.data.recordId);
     const newData = encodeURIComponent(this.state.data.newData);
-
     const send = {
       base,
       field: field,
@@ -147,11 +144,9 @@ class DataApi extends Component {
         const message = res.data.message;
         this.setState({errors, messageErr: message});
       }
-
       setInterval(() => {
         this.setState({message: '', messageErr: ''})
       }, 4000);
-
     }).catch(err => {
       console.log(err);
     })
@@ -217,7 +212,7 @@ class DataApi extends Component {
       url: '/filemaker-delete',
       data: send
     }).then(res => {
-      console.log(res.data);
+      // console.log(res.data);
       let data = this.state.data;
       let message = res.data.message;
       if (!res.data.error){
@@ -229,11 +224,7 @@ class DataApi extends Component {
         let errors = res.data.errors;
         this.setState({errors, messageErr: message});
       }
-
       setInterval(() => {
-        // data['layout'] = '';
-        // data['field'] = '';
-        // data['newData'] = '';
         this.setState({errors:{}, message: '', messageErr: ''})
       }, 5000);
     }).catch(err => {
@@ -251,17 +242,14 @@ class DataApi extends Component {
       layout: layout,
       recordId: recordId
     }
-
     axios({
       method: 'POST',
       url: '/filemaker-get',
       data: send
     }).then(res => {
-
       const data = this.state.data;
       data['layout'] = '';
       data['recordId'] = '';
-
       for (var key in res.data) {
           for(var id in res.data[key].portalData.AttendeeSignIn){
             let data = res.data[key].portalData.AttendeeSignIn[id];
@@ -281,6 +269,7 @@ class DataApi extends Component {
     const { data, message, record, errors, messageErr } = this.state;
     const info = this.state.info;
 
+    //dialog actions
     const actions = [
       <FlatButton
         label="OK"
@@ -291,7 +280,7 @@ class DataApi extends Component {
     const action = [
       <RaisedButton type="submit" label="Upload Picture" fullWidth={true} style={{marginBottom:20}} primary onClick={this.savePicture}/>
     ]
-
+    
     return (
         <div>
           <Tabs>

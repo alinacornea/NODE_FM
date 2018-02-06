@@ -7,47 +7,31 @@ var local = require('localStorage');
 */
 
 module.exports = function(app){
-  app.get('/programs', function(req, res, next) {
-    axios.post('https://fm107.beezwax.net/fmi/rest/api/auth/FilemakerProject_nov25', {
-        'user': 'staffer',
-        'password': 'test123',
-        'layout': 'AllProgramsEvents'
-    }).then(res => {
 
-     return axios.get('https://fm107.beezwax.net/fmi/rest/api/record/FilemakerProject_nov25/AllProgramsEvents', {
+  /*
+   * get all programs events
+   */
+
+  app.post('/programs', (req, res, next) => {
+    const server = decodeURIComponent(req.body.base.server);
+    const database = decodeURIComponent(req.body.base.solution);
+    const layout = decodeURIComponent(req.body.layout);
+    return axios({
+        url: `https://${server}/fmi/rest/api/record/${database}/${layout}`,
+        method: "GET",
         headers: {
-          'FM-Data-token': res.data.token
+          'FM-Data-token': req.body.base.token,
         }
-      });
     }).then(response => {
-                    // console.log(response.data.data)
-                    res.send(response.data.data)
-          })
+        res.send(response.data.data)
+      })
       .catch(err => {
-                    console.log(err)
-                    res.send({ err })
-                  })
+        console.log(err)
+        res.send({ err })
+      })
   });
 
-   app.get('/filemaker', function(req, res, next) {
-      axios.post('https://fm107.beezwax.net/fmi/rest/api/auth/FilemakerProject_nov25', {
-          'user': 'staffer',
-          'password': 'test123',
-          'layout': 'DATA_API'
-      }).then(res => {
-        return axios.get('https://fm107.beezwax.net/fmi/rest/api/record/FilemakerProject_nov25/DATA_API', {
-          headers: {
-            'FM-Data-token':res.data.token
-          }
-        });
-      }).then(response => {
-                      res.send(response.data)
-            })
-        .catch(err => {
-                      console.log(err)
-                      res.send({ err })
-                    })
-    });
+  //=============================================== DATA API EXAMPLES REQUESTS ==============================================================
 
    /*
     * posting or modifying data to filemaker from client side
@@ -197,8 +181,10 @@ module.exports = function(app){
          });
      });
 
+     /*
+      * get record from filemaker database
+      */
 
-    //get record from filemaker database
     app.post('/filemaker-get', function(req, res, next){
       const database = decodeURIComponent(req.body.base.solution);
       const server = decodeURIComponent(req.body.base.server);
@@ -219,7 +205,11 @@ module.exports = function(app){
          });
      });
 
-    //upload filemaker image
+     /*
+      * upload image to filemaker database, POST for creating a new record, or PUT method for updating in a record,
+      * specify the record id at the end of the url;
+      */
+
     app.post('/filemaker-image', function(req, res, next){
       const server = decodeURIComponent(req.body.base.server);
       const database = decodeURIComponent(req.body.base.solution);
@@ -228,8 +218,8 @@ module.exports = function(app){
       data[`IMAGE`] = decodeURIComponent(req.body.image);
 
          return axios({
-             url: `https://${server}/fmi/rest/api/record/${database}/${layout}`,
-             method: "POST",
+             url: `https://${server}/fmi/rest/api/record/${database}/${layout}/5`,
+             method: "PUT",
              headers: {
                'FM-Data-token': req.body.base.token,
                'Content-type':'application/json'
@@ -241,10 +231,44 @@ module.exports = function(app){
          const data = response.data;
          res.json({
            data,
-           message: 'Your image was uploaded succesfully!.'
+           message: 'Your image was uploaded succesfully!'
+          });
+         }).catch(err => {
+              console.log('Error: ', err)
+         });
+     });
+
+    /*
+     * update filemaker date for a specific program event
+     */
+
+    app.post('/filemaker-update-date', function(req, res, next){
+      let data = {};
+      const server = decodeURIComponent(req.body.base.server);
+      const database = decodeURIComponent(req.body.base.solution);
+      const layout = "AllProgramsEvents";
+      const recordId = parseInt(decodeURIComponent(req.body.recordId), 10);
+      data[`EventDate`] = req.body.date;
+
+         return axios({
+             url: `https://${server}/fmi/rest/api/record/${database}/${layout}/${recordId}`,
+             method: "PUT",
+             headers: {
+               'FM-Data-token': req.body.base.token,
+               'Content-type':'application/json'
+             },
+             data: {
+                 data: data
+               }
+       }).then(response => {
+         const data = response.data;
+         res.json({
+           data,
+           message: 'Your date was updated succesfully!'
           });
          }).catch(err => {
               console.log('Error: ', err)
          });
      });
 };
+// <img src=" & Program::IMAGE & " height=\"450\" width=\"650\" alt=\"\"/>

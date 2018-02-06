@@ -79,9 +79,9 @@ class App extends Component {
                <Link to="/"><ActionHome className="homepage_main"color='black' style={{width:35, height:35}}/> </Link>
               </div>
                 <div className="top-bar-right" style={{ margin:10}}>
-                  <Link to="/programs" style={style}>Programs</Link>
-                  <Link to="/filemaker"style={style}>Bookings</Link>
                   <Link to="/dataapi"style={style}>Data API</Link>
+                  <Link to="/programs" style={style}>Programs</Link>
+                  <Link to="/filemaker"style={style}>Functionality</Link>
                 </div>
        </Toolbar>
           {this.state.authenticated ? (
