@@ -218,8 +218,8 @@ module.exports = function(app){
       data[`IMAGE`] = decodeURIComponent(req.body.image);
 
          return axios({
-             url: `https://${server}/fmi/rest/api/record/${database}/${layout}/5`,
-             method: "PUT",
+             url: `https://${server}/fmi/rest/api/record/${database}/${layout}`,
+             method: "POST",
              headers: {
                'FM-Data-token': req.body.base.token,
                'Content-type':'application/json'
