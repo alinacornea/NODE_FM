@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Link, Redirect} from 'react-router-dom'
 
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
-import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
+import darkBaseTheme from './ThemeMaterial';
 import ActionHome from 'material-ui/svg-icons/action/home';
 import Toolbar from 'material-ui/Toolbar';
 
