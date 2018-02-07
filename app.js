@@ -6,9 +6,9 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 const cluster = require('cluster');
 const numCPUs = require('os').cpus().length;
+const PORT = process.env.PORT || 3000;
+const app = express();
 
-var app = express();
-// Multi-process to utilize all CPU cores.
 if (cluster.isMaster) {
   console.error(`Node cluster master ${process.pid} is running`);
 
@@ -60,6 +60,9 @@ else{
       res.status(err.status || 500);
       res.render('error');
     });
+    app.listen(PORT, function () {
+     console.error(`Node cluster worker ${process.pid}: listening on port ${PORT}`);
+   });
 
   }
 
