@@ -4,48 +4,63 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+const cluster = require('cluster');
+const numCPUs = require('os').cpus().length;
 
-// var filemaker = require('./routes/filemaker');
-var index = require('./routes/index');
 var app = express();
+// Multi-process to utilize all CPU cores.
+if (cluster.isMaster) {
+  console.error(`Node cluster master ${process.pid} is running`);
 
-// view engine setup
-app.set('views', path.join(__dirname, 'client/public/src'));
-app.set('view engine', 'jsx');
-app.get('*', function(request, response) {
-  response.sendFile(path.resolve(__dirname, '../client/build', 'index.html'));
-});
+  // Fork workers.
+  for (let i = 0; i < numCPUs; i++) {
+    cluster.fork();
+  }
 
-// uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(logger('dev'));
-app.use(bodyParser.json({limit: '50mb'}));
-app.use(bodyParser.urlencoded({ extended: false }));
-// app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
-app.use('/static', express.static(path.join(__dirname, 'client/build')));
+  cluster.on('exit', (worker, code, signal) => {
+    console.error(`Node cluster worker ${worker.process.pid} exited: code ${code}, signal ${signal}`);
+  });
 
-app.use('/', index);
-// app.use('/programs', filemaker);
-require('./routes/filemaker')(app);
-require('./routes/login')(app);
+}
+else{
 
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
-});
+    // view engine setup
+    app.set('views', path.join(__dirname, 'client/build'));
+    app.set('view engine', 'jsx');
 
-// error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+    // uncomment after placing your favicon in /public
+    //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+    app.use(logger('dev'));
+    app.use(bodyParser.json({limit: '50mb'}));
+    app.use(bodyParser.urlencoded({ extended: false }));
+    // app.use(cookieParser());
+    app.use(express.static(path.join(__dirname, '/client/build')));
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
-});
+    app.get('*', function(request, response) {
+      response.sendFile(path.resolve(__dirname, '/client/build', 'index.html'));
+    });
+    // app.use('/programs', filemaker);
+    require('./routes/filemaker')(app);
+    require('./routes/login')(app);
 
-module.exports = app;
+    // catch 404 and forward to error handler
+    app.use(function(req, res, next) {
+      var err = new Error('Not Found');
+      err.status = 404;
+      next(err);
+    });
+
+    // error handler
+    app.use(function(err, req, res, next) {
+      // set locals, only providing error in development
+      res.locals.message = err.message;
+      res.locals.error = req.app.get('env') === 'development' ? err : {};
+
+      // render the error page
+      res.status(err.status || 500);
+      res.render('error');
+    });
+
+  }
+
+  module.exports = app;
