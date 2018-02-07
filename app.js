@@ -25,8 +25,8 @@ if (cluster.isMaster) {
 else{
 
     // view engine setup
-    app.set('views', path.join(__dirname, 'client/build'));
-    app.set('view engine', 'jsx');
+    // app.set('views', path.join(__dirname, 'client/build'));
+    // app.set('view engine', 'jsx');
 
     // uncomment after placing your favicon in /public
     //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -34,10 +34,10 @@ else{
     app.use(bodyParser.json({limit: '50mb'}));
     app.use(bodyParser.urlencoded({ extended: false }));
     // app.use(cookieParser());
-    app.use(express.static(path.join(__dirname, '/client/build')));
+    app.use(express.static(path.join(__dirname, 'client/build')));
 
-    app.get('*', function(request, response) {
-      response.sendFile(path.resolve(__dirname, '/client/build', 'index.html'));
+    app.get('*', (req, res) => {
+      res.sendFile(path.join(__dirname+'/client/build/index.html'));
     });
     // app.use('/programs', filemaker);
     require('./routes/filemaker')(app);
