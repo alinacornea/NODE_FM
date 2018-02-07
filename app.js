@@ -6,7 +6,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 const cluster = require('cluster');
 const numCPUs = require('os').cpus().length;
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 const app = express();
 
 if (cluster.isMaster) {
@@ -25,8 +25,8 @@ if (cluster.isMaster) {
 else{
 
     // view engine setup
-    // app.set('views', path.join(__dirname, 'client/build'));
-    // app.set('view engine', 'jsx');
+    app.set('views', path.join(__dirname, 'client/build'));
+    app.set('view engine', 'jsx');
 
     // uncomment after placing your favicon in /public
     //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -39,7 +39,6 @@ else{
     app.get('*', (req, res) => {
       res.sendFile(path.join(__dirname+ '/client/build/index.html'));
     });
-    // app.use('/programs', filemaker);
     require('./routes/filemaker')(app);
     require('./routes/login')(app);
 

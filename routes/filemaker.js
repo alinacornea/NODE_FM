@@ -229,6 +229,7 @@ module.exports = function(app){
                }
        }).then(response => {
          const data = response.data;
+         console.log(data);
          res.json({
            data,
            message: 'Your image was uploaded succesfully!'
