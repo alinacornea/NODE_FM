@@ -95,7 +95,6 @@ module.exports = function(app){
       console.log(layout);
       let data = {};
       data[`${field}`] = decodeURIComponent(req.body.newData);
-
          return axios({
              url: `https://${server}/fmi/rest/api/record/${database}/${layout}`,
              method: "POST",
@@ -219,7 +218,7 @@ module.exports = function(app){
 
          return axios({
              url: `https://${server}/fmi/rest/api/record/${database}/${layout}`,
-             method: "POST.",
+             method: "POST",
              headers: {
                'FM-Data-token': req.body.base.token,
                'Content-type':'application/json'

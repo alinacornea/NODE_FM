@@ -35,13 +35,15 @@
 .error-message{
   text-align: center;
   color:red;
+  margin-left: 0;
 }
 
 .display-message{
   text-align: center;
   color:green;
+  margin-left: 0;
   font-family: Helvetica;
-  font-size: 18px;
+  font-size: 1.2em;
 }
 
 .programsName{
@@ -89,5 +91,5 @@
 p {
   margin: 0em;
   text-align: left;
-  margin-left: 30%;
+  margin-left: 35%;
 }

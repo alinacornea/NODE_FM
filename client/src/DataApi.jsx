@@ -146,7 +146,7 @@ class DataApi extends Component {
       }
       setInterval(() => {
         this.setState({message: '', messageErr: ''})
-      }, 4000);
+      }, 6000);
     }).catch(err => {
       console.log(err);
     })
@@ -173,8 +173,8 @@ class DataApi extends Component {
       console.log(res.data);
       let data = this.state.data;
       let message = res.data.message;
-      let record = res.data.data.recordId;
       if (!res.data.error){
+        let record = res.data.data.recordId;
         data['layout'] = '';
         data['field'] = '';
         data['newData'] = '';
@@ -190,7 +190,7 @@ class DataApi extends Component {
         // data['field'] = '';
         // data['newData'] = '';
         this.setState({errors:{}, message: '', messageErr: ''})
-      }, 5000);
+      }, 7000);
     }).catch(err => {
       console.log(err);
     });
@@ -226,7 +226,7 @@ class DataApi extends Component {
       }
       setInterval(() => {
         this.setState({errors:{}, message: '', messageErr: ''})
-      }, 5000);
+      }, 6000);
     }).catch(err => {
       console.log(err);
     });
@@ -444,26 +444,24 @@ class DataApi extends Component {
 
               <Tab label="Upload picture" >
                <div className="recordMid">
-               {message && <p className="display-message">{message} <br/> New record: {record}</p>}
-               <Dropzone multiple={false} accept="image/*" style={styles.dropzone} onDrop={this.newPicture}>
-                 <RaisedButton label="Click to add a picture..." secondary fullWidth={true} />
-               </Dropzone>
-               <div>
-               </div>
-               <div>
-                 <Dialog
-                   title="New picture"
-                   actions={action}
-                   modal={false}
-                   open={this.state.open}
-                   onRequestClose={ this.handleClose }
-                   contentStyle={ styles.dialogContent }
-                   bodyStyle={ styles.dialogBody }
-                   style={ styles.dialogRoot }
-                   repositionOnUpdate={ false } >
-                   <img src={this.state.preview} width="100%" height="100%" alt=""/>
-                 </Dialog>
-               </div>
+                 {message && <p className="display-message">{message} <br/> New record: {record}</p>}
+                 <Dropzone multiple={false} accept="image/*" style={styles.dropzone} onDrop={this.newPicture}>
+                   <RaisedButton label="Click to add a picture..." secondary fullWidth={true} />
+                 </Dropzone>
+                 <div>
+                   <Dialog
+                     title="New picture"
+                     actions={action}
+                     modal={false}
+                     open={this.state.open}
+                     onRequestClose={ this.handleClose }
+                     contentStyle={ styles.dialogContent }
+                     bodyStyle={ styles.dialogBody }
+                     style={ styles.dialogRoot }
+                     repositionOnUpdate={ false } >
+                     <img src={this.state.preview} width="100%" height="100%" alt=""/>
+                   </Dialog>
+                 </div>
                </div>
               </Tab>
           </Tabs>
