@@ -94,7 +94,7 @@ class DataApi extends Component {
       this.setState({open:false, message: message, record: record})
       setInterval(() => {
               this.setState({message: ''})
-          }, 6000);
+          }, 8000);
     }).catch(err => {
       console.log(err);
     })
@@ -280,7 +280,7 @@ class DataApi extends Component {
     const action = [
       <RaisedButton type="submit" label="Upload Picture" fullWidth={true} style={{marginBottom:20}} primary onClick={this.savePicture}/>
     ]
-    
+
     return (
         <div>
           <Tabs>

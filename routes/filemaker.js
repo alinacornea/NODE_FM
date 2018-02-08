@@ -219,7 +219,7 @@ module.exports = function(app){
 
          return axios({
              url: `https://${server}/fmi/rest/api/record/${database}/${layout}`,
-             method: "POST",
+             method: "POST.",
              headers: {
                'FM-Data-token': req.body.base.token,
                'Content-type':'application/json'
@@ -229,7 +229,6 @@ module.exports = function(app){
                }
        }).then(response => {
          const data = response.data;
-         console.log(data);
          res.json({
            data,
            message: 'Your image was uploaded succesfully!'

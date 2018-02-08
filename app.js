@@ -40,6 +40,7 @@ else{
       res.sendFile(path.join(__dirname+ '/client/build/index.html'));
     });
     require('./routes/filemaker')(app);
+    require('./routes/functionality')(app);
     require('./routes/login')(app);
 
     // catch 404 and forward to error handler
