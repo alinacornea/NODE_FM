@@ -12,6 +12,7 @@ removeDuplicates = (data) =>{
 }
 
 module.exports = function(app){
+
   app.post('/getvalue', (req, res, next) => {
     const server = decodeURIComponent(req.body.base.server);
     const database = decodeURIComponent(req.body.base.solution);
@@ -26,11 +27,13 @@ module.exports = function(app){
         }
     }).then(response => {
         let funct = response.data.data[0].fieldData.FUNCTION;
+        console.log(response.data.data[0]);
         if(funct === 'remove duplicates'){
-          let responseData = response.data.data
+          let responseData = response.data.data;
           let data = response.data.data[0].fieldData.SendNODE.split('\r');
           let send = removeDuplicates(data);
           //send back to filemaker the result
+          console.log(send);
           return axios({
                  url: `https://${server}/fmi/rest/api/record/${database}/${layout}/${recordId}`,
                  method: "PUT",
