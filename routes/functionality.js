@@ -50,7 +50,6 @@ module.exports = function(app){
           }).catch(err => {console.log(err)});
         }
       }).catch(err => {
-        // console.log(err.response.data);
           if (err.response.data.errorCode === '101'){
             return res.json({
               message: 'Check the form for errors.',
@@ -61,4 +60,26 @@ module.exports = function(app){
           }
       });
   });
+
+  //get portal information for each program
+  app.post('/portal/:recordId', (req, res, next) => {
+    const recordId = parseInt(req.params.recordId, 10);
+    const server = decodeURIComponent(req.body.server);
+    const database = decodeURIComponent(req.body.solution);
+    const layout = "PORTAL";
+    return axios({
+        url: `https://${server}/fmi/rest/api/record/${database}/${layout}/${recordId}`,
+        method: "GET",
+        headers: {
+          'FM-Data-token': req.body.token,
+        }
+    }).then(response => {
+        res.send(response.data.data)
+      })
+      .catch(err => {
+        console.log(err)
+        res.send({ err })
+      })
+  });
+
 };

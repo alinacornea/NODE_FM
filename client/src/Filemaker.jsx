@@ -54,7 +54,6 @@ class Filemaker extends Component {
           data = res.data.data[0].fieldData.SendNODE.split('\r');
           let result = res.data.result;
           let func = res.data.func;
-          data.map((item) => console.log(item));
           this.setState({ data: data, result: result, func: func, open: false})
         }
         else{

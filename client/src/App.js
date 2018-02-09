@@ -11,6 +11,7 @@ import Programs from './Programs';
 import Filemaker from './Filemaker';
 import DataApi from './DataApi';
 import DisplayInfo from './DisplayInfo';
+import Portal from './Portal';
 
 import Home from './Home';
 import Auth from './Auth';
@@ -61,6 +62,7 @@ class App extends Component {
     };
 
     componentDidMount() {
+      console.log(this.props.location);
       this.toggleAuthenticateStatus()
     }
 
@@ -82,6 +84,7 @@ class App extends Component {
                   <Link to="/dataapi"style={style}>Data API</Link>
                   <Link to="/programs" style={style}>Programs</Link>
                   <Link to="/filemaker"style={style}>Functionality</Link>
+                  <Link to={{pathname:`/portal` }}style={style}>Portal</Link>
                 </div>
        </Toolbar>
           {this.state.authenticated ? (
@@ -93,6 +96,7 @@ class App extends Component {
             <PrivateRoute path="/dataapi" component={DataApi}/>
             <PrivateRoute path="/filemaker" component={Filemaker}/>
             <PrivateRoute path="/program-info" component={DisplayInfo}/>
+            <PrivateRoute exact path="/portal/:recordId" component={Portal}/>
       </div>
       </Router>
         <div className="footer">
