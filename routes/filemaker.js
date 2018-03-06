@@ -30,7 +30,7 @@ module.exports = function(app){
         res.send({ err })
       })
   });
-  
+
   //=============================================== DATA API EXAMPLES REQUESTS ==============================================================
 
    /*
@@ -92,18 +92,21 @@ module.exports = function(app){
       const database = decodeURIComponent(req.body.base.solution);
       const layout = decodeURIComponent(req.body.layout);
       const field = decodeURIComponent(req.body.field);
-      console.log(layout);
+
       let data = {};
       data[`${field}`] = decodeURIComponent(req.body.newData);
+      console.log(req.body.base.token, data);
          return axios({
-             url: `https://${server}/fmi/rest/api/record/${database}/${layout}`,
+    //FM16  //  url: `https://${server}/fmi/rest/api/record/${database}/${layout}`,
+             url: `https://fm109.beezwax.net/fmi/data/v1/databases/cityProject/layouts/RESTAURANTS/records`,
              method: "POST",
              headers: {
-               'FM-Data-token': req.body.base.token,
+              //  'FM-Data-token': req.body.base.token,
+                Authorization: 'Bearer ' +  req.body.base.token,
                'Content-type':'application/json'
              },
              data: {
-                 data: data
+                 'fieldData': { }
                }
        }).then(response => {
          const data = response.data;

@@ -48,8 +48,11 @@ class Home extends Component {
       url: '/filemaker-login',
       data: formData
     }).then(res => {
+      console.log('RESPONSE', res);
+      // console.log(res);
       if (!res.data.error){
-        Auth.authenticateUser(res.data.token);
+        // Auth.authenticateUser(res.data.token);
+        Auth.authenticateUser(res.data.headers['x-fm-data-access-token']);
         Auth.setInfo(solution, layout, server);
         this.props.toggleAuthenticateStatus();
         this.props.history.push('/dataapi');

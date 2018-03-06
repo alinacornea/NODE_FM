@@ -174,7 +174,7 @@ class DataApi extends Component {
       let data = this.state.data;
       let message = res.data.message;
       if (!res.data.error){
-        let record = res.data.data.recordId;
+        let record = res.data.response.recordId;
         data['layout'] = '';
         data['field'] = '';
         data['newData'] = '';
